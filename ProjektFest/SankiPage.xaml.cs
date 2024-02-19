@@ -24,13 +24,11 @@ namespace ProjektFest
     public partial class SankiPage : Page
     {
         MainWindow mainwindow { get; set; }
-        int stevilo_sankov { get; set; }
 
         public SankiPage(int stevilo_sankov, MainWindow mw)
         {
             InitializeComponent();
             mainwindow = mw;
-            this.stevilo_sankov = stevilo_sankov;
             for(int i = 0; i< stevilo_sankov; i++)
             {
                 TabItem ti = new TabItem();
