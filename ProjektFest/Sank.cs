@@ -17,5 +17,7 @@ namespace ProjektFest
             this.ime = ime;
             this.natakarji= new List<Oseba>();
         }
+
+        public Sank() { }
     }
 }

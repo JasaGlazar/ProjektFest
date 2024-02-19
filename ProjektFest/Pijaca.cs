@@ -17,5 +17,7 @@ namespace ProjektFest
             this.cena = cena;
         }
 
+        public Pijaca() { }
+
     }
 }

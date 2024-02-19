@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml.Linq;
+using System.Xml.Serialization;
 
 namespace ProjektFest
 {
@@ -38,6 +41,19 @@ namespace ProjektFest
                 ti.Content = new TabTemplate(mainwindow,sank);
                 this.sankiTabControl.Items.Add(ti);
             }
+        }
+
+        private void PotrdiBtn_Click(object sender, RoutedEventArgs e)
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(Prireditev));
+
+
+            using (FileStream fs = new FileStream("serialized.xml", FileMode.Create))
+            {
+                serializer.Serialize(fs, mainwindow.prireditev);
+            }
+
+            MessageBox.Show("Object serialized successfully.");
         }
     }
 }

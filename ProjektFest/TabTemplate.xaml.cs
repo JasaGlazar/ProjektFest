@@ -22,7 +22,8 @@ namespace ProjektFest
     {
         MainWindow mainwindow;
         Sank izbrani_sank;
-        Dictionary<string,Oseba> seznam_natakarjev = new Dictionary<string,Oseba>();    
+        Dictionary<string,Oseba> seznam_natakarjev = new Dictionary<string,Oseba>();
+        Dictionary<string, Oseba> seznam_nosacev = new Dictionary<string, Oseba>();
         public TabTemplate(MainWindow mw,Sank sank)
         {
             this.izbrani_sank= sank;    
@@ -52,6 +53,33 @@ namespace ProjektFest
                 Oseba s = seznam_natakarjev[natakarji_listbox.SelectedItem.ToString()];
                 seznam_natakarjev.Remove(natakarji_listbox.SelectedItem.ToString());
                 natakarji_listbox.Items.Remove(natakarji_listbox.SelectedItem);
+                izbrani_sank.natakarji.Remove(s);
+            }
+        }
+
+        private void DodajNosacaBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Oseba o = new Oseba(ImeInputNosac.Text, PriimekInputNosac.Text);
+            string key = String.Format("{0} {1}", o.ime, o.priimek);
+            if (seznam_nosacev.Count == 0)
+            {
+                nosaci_listbox.Items.Add(key);
+                seznam_nosacev.Add(key, o);
+                izbrani_sank.nosac = o;
+            }
+            else
+            {
+                MessageBox.Show("Seznam lahko vsebuje samo enega nosača");
+            }
+        }
+
+        private void izbrisiIzbranoBtnNOsac_Click(object sender, RoutedEventArgs e)
+        {
+            if (nosaci_listbox.SelectedItem != null)
+            {
+                Oseba s = seznam_nosacev[nosaci_listbox.SelectedItem.ToString()];
+                seznam_nosacev.Remove(nosaci_listbox.SelectedItem.ToString());
+                nosaci_listbox.Items.Remove(nosaci_listbox.SelectedItem);
                 izbrani_sank.natakarji.Remove(s);
             }
         }

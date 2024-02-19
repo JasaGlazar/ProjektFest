@@ -17,7 +17,7 @@ namespace ProjektFest
         { 
             this.sanki= new List<Sank>();
             this.seznam_pijace = new List<Pijaca>();
-        } 
+        }
 
     }
 }

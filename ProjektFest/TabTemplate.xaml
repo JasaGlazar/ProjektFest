@@ -45,6 +45,25 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
+                <StackPanel Grid.RowSpan="2">
+                    <Label Content="Dodaj" Foreground="Black" FontSize="20" Margin="10" Grid.Column="1"></Label>
+                    <Label Content="Ime" Foreground="Black"  Margin="10,5,0,0"></Label>
+                    <TextBox x:Name="ImeInputNosac" HorizontalAlignment="Stretch" Height="25"  Margin="15,0" FontSize="16"></TextBox>
+
+
+                    <Label Content="Priimek" Foreground="Black"  Margin="10,15,0,0"></Label>
+                    <TextBox x:Name="PriimekInputNosac" HorizontalAlignment="Stretch" Height="25"  Margin="15,0" FontSize="16"></TextBox>
+
+                    <Button x:Name="DodajNosacaBtn" Content="Dodaj" Background="White" Margin="10,25,10,10" Click="DodajNosacaBtn_Click"></Button>
+                </StackPanel>
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="7*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ListBox x:Name="nosaci_listbox"  Margin="5"></ListBox>
+                    <Button x:Name="izbrisiIzbranoBtnNOsac" Background="White" Content="Izbriši izbrano" Margin="5" Grid.Row="1" Click="izbrisiIzbranoBtnNOsac_Click"></Button>
+                </Grid>
             </Grid>
         </GroupBox>
     </Grid>
