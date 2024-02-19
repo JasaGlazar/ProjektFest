@@ -43,6 +43,7 @@ namespace ProjektFest
 
         private void PotrdiBtn_Click(object sender, RoutedEventArgs e)
         {
+            //to je samo metoda da sem prevero če se vsi podatki vredu shranijo
             XmlSerializer serializer = new XmlSerializer(typeof(Prireditev));
 
 
