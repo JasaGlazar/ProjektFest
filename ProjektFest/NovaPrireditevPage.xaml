@@ -1,0 +1,57 @@
+﻿<Page x:Class="ProjektFest.NovaPrireditevPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:ProjektFest"
+      mc:Ignorable="d" 
+      d:DesignHeight="400" d:DesignWidth="600"
+      Title="NovaPrireditevPage" Background="LightBlue">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel>
+            <Label Content="Ustvari prireditev" Foreground="Black" FontSize="20" Margin="10"></Label>
+            <Label Content="Ime prireditve" Foreground="Black"  Margin="10,0,0,0"></Label>
+            <TextBox x:Name="ImePrireditveInput" HorizontalAlignment="Stretch" Height="25"  Margin="15,0" FontSize="16"></TextBox>
+
+            <Label Content="Leto prireditve" Foreground="Black"  Margin="10,15,0,0"></Label>
+            <TextBox x:Name="LetoPrireditveInput" HorizontalAlignment="Stretch" Height="25"  Margin="15,0" FontSize="16"></TextBox>
+
+            <Label Content="Število šankov" Foreground="Black"  Margin="10,15,0,0"></Label>
+            <TextBox x:Name="StSankovInput" HorizontalAlignment="Stretch" Height="25"  Margin="15,0" FontSize="16"></TextBox>
+        </StackPanel>
+
+
+
+        <Grid Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="10*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <ListBox x:Name="SeznamPijacListBox" Grid.Column="1" Margin="10"></ListBox>
+            <Button x:Name="IzbrisiIzbranoPijacoBtn" Content="Izbriši izbrano" Grid.Column="1" Grid.Row="1" Margin="10,5" Background="White" Click="IzbrisiIzbranoPijacoBtn_Click"></Button>
+
+            <StackPanel Grid.RowSpan="2">
+                <Label Content="Dodaj Pijačo" Foreground="Black" FontSize="20" Margin="10" Grid.Column="1"></Label>
+                <Label Content="Ime pijače" Foreground="Black"  Margin="10,25,0,0"></Label>
+                <TextBox x:Name="ImePijaceInput" HorizontalAlignment="Stretch" Height="25"  Margin="15,0" FontSize="16"></TextBox>
+
+
+                <Label Content="Cena pijače" Foreground="Black"  Margin="10,15,0,0"></Label>
+                <TextBox x:Name="CenaPijaceINput" HorizontalAlignment="Stretch" Height="25"  Margin="15,0" FontSize="16"></TextBox>
+
+                <Button x:Name="DodajPijacoBtn" Content="Dodaj" Background="White" Margin="10,25,10,10" Click="DodajPijacoBtn_Click"></Button>
+            </StackPanel>
+
+        </Grid>
+        <Button x:Name="naslednjiKorakBtn" Content="Naprej" Background="White" Grid.ColumnSpan="2" Width="100" Height="30" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,50,10" Click="naslednjiKorakBtn_Click"></Button>
+    </Grid>
+</Page>

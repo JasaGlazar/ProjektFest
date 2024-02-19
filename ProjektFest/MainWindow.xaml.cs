@@ -20,9 +20,12 @@ namespace ProjektFest
     /// </summary>
     public partial class MainWindow : Window
     {
+        public List<Pijaca> seznam_pijac = new List<Pijaca>();
+        public Prireditev prireditev = new Prireditev();
         public MainWindow()
         {
             InitializeComponent();
+            Main.Content = new StartPage(this);
         }
     }
 }
