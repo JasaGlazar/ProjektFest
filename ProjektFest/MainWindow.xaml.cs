@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,7 +21,7 @@ namespace ProjektFest
     /// </summary>
     public partial class MainWindow : Window
     {
-        public List<Pijaca> seznam_pijac = new List<Pijaca>();
+        public List<Pijaca> seznam_pijac = Utilities.StalnaPijaca();
         public Prireditev prireditev = new Prireditev();
         public MainWindow()
         {

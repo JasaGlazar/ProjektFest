@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -48,8 +49,8 @@ namespace ProjektFest
             try
             {
                 string cena_input = CenaPijaceINput.Text;
-                cena_input = cena_input.Replace(',', '.');
-                Pijaca p = new Pijaca(ImePijaceInput.Text.ToString(), Math.Round(Convert.ToDouble(cena_input), 2));
+                //cena_input = cena_input.Replace(',', '.');
+                Pijaca p = new Pijaca(ImePijaceInput.Text.ToString(), Convert.ToDouble(cena_input));
                 string key = String.Format("{0} | {1}€", p.ime, p.cena);
                 if (!slovar_pijac.ContainsKey(key))
                 {
@@ -83,9 +84,11 @@ namespace ProjektFest
         {
             try
             {
- 
                 mainwindow.prireditev.ime_prireditve = ImePrireditveInput.Text;
                 mainwindow.prireditev.leto_prireditve = LetoPrireditveInput.Text;
+
+                Utilities.UstvariMapoZaPrireditev(mainwindow.prireditev.ime_prireditve, mainwindow.prireditev.leto_prireditve);
+
                 foreach(Pijaca p in mainwindow.seznam_pijac)
                 {
                     mainwindow.prireditev.seznam_pijace.Add(p);
