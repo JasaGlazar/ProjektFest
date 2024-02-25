@@ -44,18 +44,36 @@ namespace ProjektFest
         //to je samo metoda da sem prevero če se vsi podatki vredu shranijo
         private void PotrdiBtn_Click(object sender, RoutedEventArgs e)
         {
-            XmlSerializer serializer = new XmlSerializer(typeof(Prireditev));
-
-            string potDoMape = Utilities.PridobiMapoTrenutnePrireditve(mainwindow.prireditev.ime_prireditve, mainwindow.prireditev.leto_prireditve);
-
-            string celotnaPot = System.IO.Path.Combine(potDoMape, "serialized.xml");
-
-            using (FileStream fs = new FileStream(celotnaPot, FileMode.Create))
+            try
             {
-                serializer.Serialize(fs, mainwindow.prireditev);
-            }
+                XmlSerializer serializer = new XmlSerializer(typeof(Prireditev));
 
-            MessageBox.Show("Object serialized successfully.");
+                string potDoMape = Utilities.PridobiMapoTrenutnePrireditve(mainwindow.prireditev.ime_prireditve, mainwindow.prireditev.leto_prireditve);
+
+                string celotnaPot = System.IO.Path.Combine(potDoMape, "serialized.xml");
+
+                using (FileStream fs = new FileStream(celotnaPot, FileMode.Create))
+                {
+                    serializer.Serialize(fs, mainwindow.prireditev);
+                }
+
+                // Create the new page instance
+                VnosPodatkovPijace newPage = new VnosPodatkovPijace(mainwindow.prireditev.seznam_pijace);
+
+                mainwindow.Main.Content = newPage;
+                
+                Window thiswindow = Window.GetWindow(this);
+                if (thiswindow != null)
+                {
+                    thiswindow.WindowState = WindowState.Maximized;
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
     }
 }
