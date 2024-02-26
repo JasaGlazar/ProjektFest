@@ -58,7 +58,7 @@ namespace ProjektFest
                 }
 
                 // Create the new page instance
-                VnosPodatkovPijace newPage = new VnosPodatkovPijace(mainwindow.prireditev.seznam_pijace);
+                VnosPodatkovPijace newPage = new VnosPodatkovPijace(mainwindow.prireditev.seznam_pijace, mainwindow, sankiTabControl.SelectedIndex);
 
                 mainwindow.Main.Content = newPage;
                 
