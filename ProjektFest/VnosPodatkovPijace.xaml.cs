@@ -14,6 +14,11 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Data;
 using System.Reflection.Metadata.Ecma335;
+using System.Printing;
+using System.IO;
+using iText.Kernel.Pdf;
+using iText.Layout;
+using iText.Layout.Element;
 
 namespace ProjektFest
 {
@@ -65,12 +70,14 @@ namespace ProjektFest
         private void GenerirajPorocilo_ButtonClick(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Generiraj porocilo");
+            UstvariPDF();
         }
 
         private void Primerjaj_ButtonClick(object sender, RoutedEventArgs e)
         {
             try
             {
+                PorociloButton.IsEnabled = true;
                 //Ustvarjena tretja tabela ki bo prikazala rezultate glede na prvi dve
                 DataTable diffTable = new DataTable();
 
@@ -170,6 +177,33 @@ namespace ProjektFest
             }
         }
 
+        private void UstvariPDF()
+        {
+            try
+            {
+                using (FileStream fs = new FileStream("primer.pdf", FileMode.Create))
+                {
+                    var writer = new PdfWriter(fs);
+
+                    var pdf = new PdfDocument(writer);
+
+                    var document = new Document(pdf);
+
+                    iText.Layout.Element.Paragraph header = new iText.Layout.Element.Paragraph("Hello, this is your PDF report!")
+                        .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
+                        .SetFontSize(16);
+
+                    document.Add(header);
+
+                    document.Close();
+
+                }
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Error generating PDF: " + ex.Message);
+            }
+        }
 
         private DataTable ustvariPraznoTabelo()
         {
