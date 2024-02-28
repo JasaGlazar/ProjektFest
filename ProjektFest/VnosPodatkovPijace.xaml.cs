@@ -19,6 +19,11 @@ using System.IO;
 using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
+using Microsoft.Win32;
+using iText.Kernel.Pdf.Canvas.Draw;
+using iText.Layout.Renderer;
+using iText.Kernel.Font;
+using iText.IO.Font;
 
 namespace ProjektFest
 {
@@ -181,21 +186,91 @@ namespace ProjektFest
         {
             try
             {
-                using (FileStream fs = new FileStream("primer.pdf", FileMode.Create))
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.Filter = "PDF document (*.pdf)|*.pdf";
+                saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+                DataTable Komora = ((DataView)dataTable1.ItemsSource).Table;
+                DataTable Nosac = ((DataView)dataTable2.ItemsSource).Table;
+                DataTable Rezultat = ((DataView)dataTable3.ItemsSource).Table;
+
+                string nazivPrireditve = this.mainwindow.prireditev.ime_prireditve + " " + this.mainwindow.prireditev.leto_prireditve;
+
+
+                if (saveFileDialog.ShowDialog() == true)
                 {
-                    var writer = new PdfWriter(fs);
+                    using (FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.Create))
+                    {
+                        var writer = new PdfWriter(fs);
+                        var pdf = new PdfDocument(writer);
+                        var document = new Document(pdf);
 
-                    var pdf = new PdfDocument(writer);
+                       // string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                       // string relativeFontPath = System.IO.Path.Combine("Resources", "Roboto-Medium.ttf");
+                       // string fullFontPath = System.IO.Path.Combine (baseDirectory, relativeFontPath);
 
-                    var document = new Document(pdf);
+                       // PdfFont font = PdfFontFactory.CreateFont(fullFontPath, PdfEncodings.IDENTITY_H);
 
-                    iText.Layout.Element.Paragraph header = new iText.Layout.Element.Paragraph("Hello, this is your PDF report!")
-                        .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
-                        .SetFontSize(16);
+                       // document.SetFont(font);
 
-                    document.Add(header);
+                        string imeNosaca = NosacText.Text;
+                        string imeSanka = (string)ImeSanka.Content;
+                        List<Oseba> seznamNatakarjev = (List<Oseba>)KelnarjiListView.ItemsSource;
+                        DateTime datumNastanka = DateTime.Now;
 
-                    document.Close();
+                        iText.Layout.Element.Paragraph header = new iText.Layout.Element.Paragraph("Poročilo o prodani pijači")
+                            .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
+                            .SetFontSize(20);
+                        document.Add(header);
+
+                        iText.Layout.Element.Paragraph header1 = new iText.Layout.Element.Paragraph("Fest.si")
+                            .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
+                            .SetFontSize(14);
+                        document.Add(header1);
+
+                        iText.Layout.Element.Paragraph naslov = new iText.Layout.Element.Paragraph("Rajšpova ulica 16")
+                            .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
+                            .SetFontSize(14);
+                        document.Add(naslov);
+
+                        iText.Layout.Element.Paragraph posta = new iText.Layout.Element.Paragraph("2250 Ptuj")
+                            .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
+                            .SetFontSize(14);
+                        document.Add(posta);
+
+                        LineSeparator lineSeparator = new LineSeparator(new SolidLine());
+                        document.Add(lineSeparator);
+
+                        iText.Layout.Element.Paragraph imePrireditveParagraph = new iText.Layout.Element.Paragraph("Ime prireditve: " + nazivPrireditve);
+                        document.Add(imePrireditveParagraph);
+
+                        iText.Layout.Element.Paragraph imeSankaParagraph = new iText.Layout.Element.Paragraph("Ime šanka: " + imeSanka);
+                        document.Add(imeSankaParagraph);
+
+                        iText.Layout.Element.Paragraph datumNastankaParagraph = new iText.Layout.Element.Paragraph("Datum nastanka poročila: " + datumNastanka.ToString());
+                        document.Add(datumNastankaParagraph);
+
+                        iText.Layout.Element.Paragraph imeNosacaParagraph = new iText.Layout.Element.Paragraph("Ime nosača: " + imeNosaca);
+                        document.Add(imeNosacaParagraph);
+
+                        iText.Layout.Element.Paragraph natakarjiParagraph = new iText.Layout.Element.Paragraph("Natakarji: ");
+                        document.Add(natakarjiParagraph);
+
+                        foreach (var item in seznamNatakarjev)
+                        {
+                            iText.Layout.Element.Paragraph imeNatakarjaParagraph = new iText.Layout.Element.Paragraph(item.ime + " " + item.priimek);
+                            document.Add(imeNatakarjaParagraph);
+
+                        }
+
+                        IncludeDataTableInPdf(document, "Komora", Komora);
+                        IncludeDataTableInPdf(document, "Nosac", Nosac);
+                        IncludeDataTableInPdf(document, "Rezultat", Rezultat);
+
+
+                        document.Close();
+
+                    }
 
                 }
             }
@@ -203,6 +278,38 @@ namespace ProjektFest
             {
                 MessageBox.Show("Error generating PDF: " + ex.Message);
             }
+        }
+
+        private void IncludeDataTableInPdf(Document document, string tableName, DataTable dataTable)
+        {
+            iText.Layout.Element.Paragraph tableTitle = new iText.Layout.Element.Paragraph(tableName)
+                .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
+                .SetFontSize(16);
+            document.Add(tableTitle);
+
+            // Create a table
+            iText.Layout.Element.Table table = new iText.Layout.Element.Table(dataTable.Columns.Count);
+
+            // Add table headers
+            foreach (DataColumn column in dataTable.Columns)
+            {
+                table.AddCell(new Cell().Add(new iText.Layout.Element.Paragraph(column.ColumnName)));
+            }
+
+            // Add table rows
+            foreach (DataRow row in dataTable.Rows)
+            {
+                foreach (object item in row.ItemArray)
+                {
+                    table.AddCell(new Cell().Add(new iText.Layout.Element.Paragraph(item.ToString())));
+                }
+            }
+
+            // Add the table to the document
+            document.Add(table);
+
+            // Add space between tables
+            document.Add(new AreaBreak());
         }
 
         private DataTable ustvariPraznoTabelo()

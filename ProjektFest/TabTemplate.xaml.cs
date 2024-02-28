@@ -40,6 +40,8 @@ namespace ProjektFest
                 natakarji_listbox.Items.Add(key);
                 seznam_natakarjev.Add(key, s);
                 izbrani_sank.natakarji.Add(s);
+                ImeInput.Clear();
+                PriimekInput.Clear();
             } else
             {
                 MessageBox.Show("Natakar že obstaja");
@@ -66,6 +68,8 @@ namespace ProjektFest
                 nosaci_listbox.Items.Add(key);
                 seznam_nosacev.Add(key, o);
                 izbrani_sank.nosac = o;
+                ImeInputNosac.Clear();
+                PriimekInputNosac.Clear();
             }
             else
             {
