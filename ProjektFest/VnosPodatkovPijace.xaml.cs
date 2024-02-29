@@ -24,6 +24,11 @@ using iText.Kernel.Pdf.Canvas.Draw;
 using iText.Layout.Renderer;
 using iText.Kernel.Font;
 using iText.IO.Font;
+using iTextSharp.text.pdf;
+using Org.BouncyCastle.Ocsp;
+using System.Windows.Markup;
+using System.Xml.Serialization;
+using Newtonsoft.Json;
 
 namespace ProjektFest
 {
@@ -34,12 +39,14 @@ namespace ProjektFest
     {
         MainWindow mainwindow { get; set; }
         List<Pijaca> pijacas { get; set; }
+        int index { get; set; }
 
         public VnosPodatkovPijace(List<Pijaca> pijacas, MainWindow mainWindow, int index)
         {
             InitializeComponent();
             this.pijacas = pijacas;
             this.mainwindow = mainWindow;
+            this.index = index;
 
             //mogoce bi si mogo kot konstruktor vrzt iz prejsne strani index selectanega taba, pa mainwindow da bi dobo tote lastnosti
 
@@ -82,6 +89,8 @@ namespace ProjektFest
         {
             try
             {
+                double sum = 0;
+
                 PorociloButton.IsEnabled = true;
                 //Ustvarjena tretja tabela ki bo prikazala rezultate glede na prvi dve
                 DataTable diffTable = new DataTable();
@@ -165,6 +174,9 @@ namespace ProjektFest
                     var KoncniZnesek = razlika * cenaPijace;
 
                     diffRow[4] = razlika;
+
+                    sum = sum + KoncniZnesek;
+
                     diffRow[5] = KoncniZnesek;
 
 
@@ -172,6 +184,8 @@ namespace ProjektFest
                     diffTable.Rows.Add(diffRow);
                 }
 
+                //izpis suminare vrednosti
+                SuminaranaVrednost.Text = sum.ToString();
                 // Set diffTable as the ItemsSource of dataTable3
                 dataTable3.ItemsSource = diffTable.DefaultView;
             }
@@ -201,8 +215,8 @@ namespace ProjektFest
                 {
                     using (FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.Create))
                     {
-                        var writer = new PdfWriter(fs);
-                        var pdf = new PdfDocument(writer);
+                        var writer = new iText.Kernel.Pdf.PdfWriter(fs);
+                        var pdf = new iText.Kernel.Pdf.PdfDocument(writer);
                         var document = new Document(pdf);
 
                        // string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
@@ -335,6 +349,60 @@ namespace ProjektFest
                 datatable.Rows.Add(row);
             }
             return datatable;
+        }
+
+        private void ShraniPodatke_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // Get DataTable instances from data sources
+                DataTable Komora = ((DataView)dataTable1.ItemsSource).Table;
+                DataTable Nosac = ((DataView)dataTable2.ItemsSource).Table;
+                DataTable Rezultat = ((DataView)dataTable3.ItemsSource).Table;
+
+                // Create an instance of ShraniObjektSank
+                ShraniObjektSank sos = new ShraniObjektSank
+                {
+                    // Assign properties of sos
+                    imePrireditve = mainwindow.prireditev.ime_prireditve,
+                    letoPrireditve = mainwindow.prireditev.leto_prireditve,
+                    sank = mainwindow.prireditev.sanki[this.index].ime,
+                    kelnarji = mainwindow.prireditev.sanki[this.index].natakarji,
+                    nosac = mainwindow.prireditev.sanki[this.index].nosac,
+                    Komora = Komora,
+                    NosacDataTable = Nosac,
+                    Rezultat = Rezultat,
+                    SumiranaVrednost = Convert.ToDouble(SuminaranaVrednost.Text)
+                };
+
+                // Serialize sos object to JSON string
+                string json = JsonConvert.SerializeObject(sos);
+
+                // Display SaveFileDialog to choose the file location
+                Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog();
+                saveFileDialog.Filter = "Fest Files|*.fest|All Files|*.*";
+                saveFileDialog.Title = "Save Fest Data";
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    // Write the JSON string to the selected file
+                    File.WriteAllText(saveFileDialog.FileName, json);
+
+                    // Show success message if the data is saved successfully
+                    MessageBox.Show("The data has been saved successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    // Show message if the user cancels the save operation
+                    MessageBox.Show("Save operation canceled by the user.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Display error message if any exception occurs during the process
+                MessageBox.Show($"An error occurred while saving the data: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
         }
     }
 }
