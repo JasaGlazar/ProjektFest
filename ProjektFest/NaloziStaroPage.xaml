@@ -20,6 +20,7 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
@@ -50,21 +51,45 @@
             <TextBlock x:Name="NosacTextStaro"/>
         </StackPanel>
 
-        <!-- DataGrids -->
-        <DataGrid x:Name="dataTable1Staro" Grid.Row="1" Grid.Column="0" 
-     AutoGenerateColumns="True" CanUserAddRows="True" />
-        <DataGrid x:Name="dataTable2Staro" Grid.Row="1" Grid.Column="1" 
-     AutoGenerateColumns="True" CanUserAddRows="True" />
-        <DataGrid x:Name="dataTable3Staro" Grid.Row="1" Grid.Column="2" 
-     AutoGenerateColumns="True" CanUserAddRows="True" />
+        <StackPanel Grid.Row="1" Grid.Column="0">
+            <Label Content="KOMORA" FontWeight="Bold" HorizontalAlignment="Center"></Label>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Grid.Column="1">
+            <Label Content="NOSAC" FontWeight="Bold" HorizontalAlignment="Center"></Label>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Grid.Column="2">
+            <Label Content="RAZLIKA" FontWeight="Bold" HorizontalAlignment="Center"></Label>
+        </StackPanel>
 
-        <StackPanel Grid.Row="2" Grid.ColumnSpan="3" Orientation="Horizontal">
+
+        <!-- DataGrids -->
+        <DataGrid x:Name="dataTable1Staro" Grid.Row="2" Grid.Column="0" 
+    AutoGenerateColumns="True" CanUserAddRows="True" />
+        <DataGrid x:Name="dataTable2Staro" Grid.Row="2" Grid.Column="1" 
+    AutoGenerateColumns="True" CanUserAddRows="True" />
+        <DataGrid x:Name="dataTable3Staro" Grid.Row="2" Grid.Column="2" 
+    AutoGenerateColumns="True" CanUserAddRows="True" />
+
+        <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal">
             <Label Content="Suminara vrednost:"></Label>
             <TextBlock FontStyle="Normal" Name="SuminaranaVrednostStaro" FontSize="20"></TextBlock>
+            <TextBlock FontStyle="Normal" Text="€" FontSize="20"></TextBlock>
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
+            <Label Content="Suminara vrednost:"></Label>
+            <TextBlock FontStyle="Normal" Name="SuminaranaVrednostNosacStaro" FontSize="20"></TextBlock>
+            <TextBlock FontStyle="Normal" Text="€" FontSize="20"></TextBlock>
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal">
+            <Label Content="Suminara vrednost:"></Label>
+            <TextBlock FontStyle="Normal" Name="SuminaranaVrednostRazlikaStaro" FontSize="20"></TextBlock>
+            <TextBlock FontStyle="Normal" Text="€" FontSize="20"></TextBlock>
         </StackPanel>
 
         <!-- Buttons -->
-        <StackPanel Grid.Row="3" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10">
+        <StackPanel Grid.Row="4" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10">
             <Button Content="Primerjaj" Click="PrimerjajStaro_Button" Margin="5"/>
             <Button x:Name="PorociloButton" Content="Generiraj poročilo" Click="PorociloButtonStaro_Click" Margin="5" IsEnabled="False"/>
             <Button x:Name="ShraniPodatke" Content="Shrani" Click="ShraniPodatkeStaro_Click" Margin="5" />

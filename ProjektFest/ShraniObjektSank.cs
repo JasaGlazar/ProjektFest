@@ -20,6 +20,8 @@ namespace ProjektFest
         public DataTable NosacDataTable { get; set; }
         public DataTable Rezultat {  get; set; }
         public double SumiranaVrednost {  get; set; }
+        public double SuminaraVrednostNosac { get; set; }
+        public double SuminaraVrednostRazlika { get; set; }
 
     }
 }
