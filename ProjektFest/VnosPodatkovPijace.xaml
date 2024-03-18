@@ -60,31 +60,16 @@
             <Label Content="RAZLIKA" FontWeight="Bold" HorizontalAlignment="Center"></Label>
         </StackPanel>
 
-
         <!-- DataGrids -->
         <DataGrid x:Name="dataTable1" Grid.Row="2" Grid.Column="0" 
-            AutoGenerateColumns="True" CanUserAddRows="True" />
+            AutoGenerateColumns="True" CanUserAddRows="False" />
         <DataGrid x:Name="dataTable2" Grid.Row="2" Grid.Column="1" 
-            AutoGenerateColumns="True" CanUserAddRows="True" />
+            AutoGenerateColumns="True" CanUserAddRows="False" />
         <DataGrid x:Name="dataTable3" Grid.Row="2" Grid.Column="2" 
-            AutoGenerateColumns="True" CanUserAddRows="True" />
+            AutoGenerateColumns="True" CanUserAddRows="False" />
 
-        <StackPanel Grid.Row="3" Grid.Column="0" Orientation="Horizontal">
-            <Label Content="Suminara vrednost:"></Label>
-            <TextBlock FontStyle="Normal" Name="SuminaranaVrednostKomora" FontSize="20"></TextBlock>
-            <TextBlock FontStyle="Normal" Text="€" FontSize="20"></TextBlock>
-        </StackPanel>
-
-        <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
-            <Label Content="Suminara vrednost:"></Label>
-            <TextBlock FontStyle="Normal" Name="SuminaranaVrednostNosac" FontSize="20"></TextBlock>
-            <TextBlock FontStyle="Normal" Text="€" FontSize="20"></TextBlock>
-        </StackPanel>
-
-        <StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal">
-            <Label Content="Suminara vrednost:"></Label>
-            <TextBlock FontStyle="Normal" Name="SuminaranaVrednostRazlika" FontSize="20"></TextBlock>
-            <TextBlock FontStyle="Normal" Text="€" FontSize="20"></TextBlock>
+        <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button x:Name="BlagajnaButton" Content="Primerjaj z blagajno" Click="Blagajna_Click" IsEnabled="False"></Button>
         </StackPanel>
 
         <!-- Buttons -->

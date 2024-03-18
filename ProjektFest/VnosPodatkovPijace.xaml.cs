@@ -97,6 +97,7 @@ namespace ProjektFest
             try
             {
                 PorociloButton.IsEnabled = true;
+                BlagajnaButton.IsEnabled = true;
                 //Ustvarjena tretja tabela ki bo prikazala rezultate glede na prvi dve
                 DataTable diffTable = new DataTable();
 
@@ -394,9 +395,6 @@ namespace ProjektFest
                     Komora = Komora,
                     NosacDataTable = Nosac,
                     Rezultat = Rezultat,
-                    SumiranaVrednost = Convert.ToDouble(SuminaranaVrednostKomora.Text),
-                    SuminaraVrednostNosac = Convert.ToDouble(SuminaranaVrednostNosac.Text),
-                    SuminaraVrednostRazlika = Convert.ToDouble(SuminaranaVrednostRazlika.Text)
                 };
 
                 // Serialize sos object to JSON string
@@ -427,6 +425,15 @@ namespace ProjektFest
                 MessageBox.Show($"An error occurred while saving the data: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
+        }
+
+        private void Blagajna_Click(object sender, RoutedEventArgs e)
+        {
+            DataTable Komora = ((DataView)dataTable1.ItemsSource).Table;
+            DataTable Nosac = ((DataView)dataTable2.ItemsSource).Table;
+            DataTable Razlika = ((DataView)dataTable3.ItemsSource).Table;
+
+            mainwindow.Main.Content = new PrimerjavaPodatkovZBlagajno(Komora);
         }
     }
 }
