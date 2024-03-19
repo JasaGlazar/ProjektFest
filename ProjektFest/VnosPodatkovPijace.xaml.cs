@@ -51,9 +51,6 @@ namespace ProjektFest
             this.mainwindow = mainWindow;
             this.index = index;
 
-            //mogoce bi si mogo kot konstruktor vrzt iz prejsne strani index selectanega taba, pa mainwindow da bi dobo tote lastnosti
-
-
             //Pridobi ime sanka iz tab-a
             ImeSanka.Content = this.mainwindow.prireditev.sanki.ElementAt(index).ime;
             //pridobi imena kelnarjev
@@ -61,7 +58,6 @@ namespace ProjektFest
             //pridobi ime nosacev
             NosacText.Text = $"{this.mainwindow.prireditev.sanki.ElementAt(index).nosac.ime} {this.mainwindow.prireditev.sanki.ElementAt(index).nosac.priimek}";
 
-           
             DataTable komora = ustvariPraznoTabelo();
             //Odstrani zadnji column v komora tabeli ker nerabimo koncnega stanja
             /* Bom pusto isto pa se naj vse preverja, naj pač prepišejo vrednosti se zadaj pri komori
@@ -70,21 +66,12 @@ namespace ProjektFest
             */
             DataTable nosac = ustvariPraznoTabelo();
 
-
             //Prikazi tabli
             dataTable1.ItemsSource = komora.DefaultView;
             dataTable2.ItemsSource = nosac.DefaultView;
 
         }
 
-        //To bas event za generiranje pdf-ja jaša, mormo pa se postudirat malo kak omejit tote gumbe ce ponesreci kdo kline, v smislu da morajo biti vsa polja
-        //Izpolnjena pa to...
-
-        /*
-            Note to self, zmenit se moramo kako prikazujemo podatke v tretji tabeli, torej kdaj bo + in kdaj - torej ce si komora ne zapise ali ce si nosac nezapise
-            prav tako se moramo dogovorit za stvari ki se vrnejo nazaj, če se te odštejejo od koncnega rezulata računanja stanja, ker kolko vem to piše samo nosač
-            komora pa ne
-         */
 
         private void GenerirajPorocilo_ButtonClick(object sender, RoutedEventArgs e)
         {
@@ -433,7 +420,7 @@ namespace ProjektFest
             DataTable Nosac = ((DataView)dataTable2.ItemsSource).Table;
             DataTable Razlika = ((DataView)dataTable3.ItemsSource).Table;
 
-            mainwindow.Main.Content = new PrimerjavaPodatkovZBlagajno(Komora);
+            mainwindow.Main.Content = new PrimerjavaPodatkovZBlagajno(Komora, Nosac, Razlika, this.mainwindow, this.index);
         }
     }
 }

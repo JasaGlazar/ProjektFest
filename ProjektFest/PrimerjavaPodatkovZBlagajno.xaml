@@ -49,9 +49,7 @@
      AutoGenerateColumns="True" CanUserAddRows="False" />
         <DataGrid x:Name="dataTable3Blagajna" Grid.Row="2" Grid.Column="2" 
      AutoGenerateColumns="True" CanUserAddRows="False" />
-
         
-
         <!-- Buttons -->
         <StackPanel Grid.Row="4" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10">
             <Button Content="Primerjaj" Click="PrimerjajBlagajnoButton_Click" Margin="5"/>

@@ -19,9 +19,10 @@ namespace ProjektFest
         public DataTable Komora { get; set; }
         public DataTable NosacDataTable { get; set; }
         public DataTable Rezultat {  get; set; }
-        public double SumiranaVrednost {  get; set; }
-        public double SuminaraVrednostNosac { get; set; }
-        public double SuminaraVrednostRazlika { get; set; }
+        
+        public DataTable KomoraSumirane {  get; set; }
+        public DataTable Blagajna { get; set; }
+        public DataTable RazlikaBlagajnaKomora {  get; set; }
 
     }
 }

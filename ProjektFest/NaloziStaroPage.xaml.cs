@@ -30,9 +30,6 @@ namespace ProjektFest
             dataTable1Staro.ItemsSource = sos.Komora.DefaultView;
             dataTable2Staro.ItemsSource = sos.NosacDataTable.DefaultView;
             dataTable3Staro.ItemsSource = sos.Rezultat.DefaultView;
-            SuminaranaVrednostStaro.Text = sos.SumiranaVrednost.ToString();
-            SuminaranaVrednostNosacStaro.Text = sos.SuminaraVrednostNosac.ToString();
-            SuminaranaVrednostRazlikaStaro.Text = sos.SuminaraVrednostRazlika.ToString();
 
         }
 

@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,11 +25,19 @@ namespace ProjektFest
     public partial class PrimerjavaPodatkovZBlagajno : Page
     {
         DataTable komoraKopija {  get; set; }
+        DataTable NosacKopija { get; set; }
+        DataTable RazlikaKopija { get; set; }
+        MainWindow MainWindowKopija { get; set; }
+        int Index {  get; set; }
 
-        public PrimerjavaPodatkovZBlagajno(DataTable Komora)
+        public PrimerjavaPodatkovZBlagajno(DataTable Komora, DataTable Nosac, DataTable Razlika, MainWindow mainWindow, int index)
         {
             InitializeComponent();
             this.komoraKopija = Komora;
+            this.NosacKopija = Nosac;
+            this.RazlikaKopija = Razlika;
+            this.MainWindowKopija = mainWindow;
+            this.Index = index;
 
             DataTable PrikaziTabelo = UstvariKomoraSumiranaDataTable(komoraKopija);
             dataTable1Blagajna.ItemsSource = PrikaziTabelo.DefaultView;
@@ -154,41 +164,118 @@ namespace ProjektFest
             // + pomeni da se je izdalo več pijače kot se je prodalo ( neki ne stima )
             // - pomeni da se je prodalo več pijače kot se je prineslo? ( neki ne stima )
             // mislim da bi mogo lih kontra nardit, kao od blagajne odstet da bi vedle če je minus prave i think kao da se je vec prineslo kak prodalo
-            double RezultatCola = KomoraCola - BlagajnaCola;
-            double RezultatSchweps = KomoraSchweps - BlagajnaSchweps;
-            double RezultatOra = KomoraOra - BlagajnaOra;
-            double RezultatLedeniCaj = KomoraLedeniCaj - BlagajnaLedeniCaj;
-            double RezultatVodaOkus = KomoraVodaOkus - BlagajnaVodaOkus;
-            double RezultatVodaBrez = KomoraVodaBrez - BlagajnaBrezOkus;
-            double RezultatJuice = KomoraJuice - BlagajnaJuice;
-            double Rezultat = KomoraRadenska - BlagajnaRadenska;
-            double RezultatEnergijski = KomoraEnergy - BlagajnaEnergijskaPijaca;
-            double RezultatLasko = KomoraLasko - BlagajnaLasko;
-            double RezultatUnion = KomoraUnion - BlagajnaUnion;
-            double RezultatUnibrez = KomoraUniBrez - BlagajnaUniBrez;
-            double RezultatVinoBelo = KomoraVinoBelo - BlagajnaVinoBelo;
-            double RezultatVinoRdece = KomoraVinoRdeče - BlagajnaVinoRdece;
-            double RezultatVodka = KomoraVodka - BlagajnaVodka;
-            double RezultatBorovnicke = KomoraBorovnicke - BlagajnaBorovnicke;
-            double RezultatJagermeister = KomoraJagermaiset - BlagajnaJagermaister;
-            double RezultatJackDaniels = KomoraJackDaniels - BlagajnaJackDaniels;
-            double RezultatGin = KomoraGin - BlagajnaGin;
+            double RezultatCola = BlagajnaCola - KomoraCola;
+            double RezultatSchweps = BlagajnaSchweps - KomoraSchweps;
+            double RezultatOra = BlagajnaOra - KomoraOra;
+            double RezultatLedeniCaj = BlagajnaLedeniCaj - KomoraLedeniCaj;
+            double RezultatVodaOkus = BlagajnaVodaOkus - KomoraVodaOkus;
+            double RezultatVodaBrez = BlagajnaBrezOkus - KomoraVodaBrez;
+            double RezultatJuice = BlagajnaJuice - KomoraJuice;
+            double RezultatRadenska = BlagajnaRadenska - KomoraRadenska;
+            double RezultatEnergijski = BlagajnaEnergijskaPijaca - KomoraEnergy;
+            double RezultatLasko = BlagajnaLasko - KomoraLasko;
+            double RezultatUnion = BlagajnaUnion - KomoraUnion;
+            double RezultatUnibrez = BlagajnaUniBrez - KomoraUniBrez;
+            double RezultatVinoBelo = BlagajnaVinoBelo - KomoraVinoBelo;
+            double RezultatVinoRdece = BlagajnaVinoRdece - KomoraVinoRdeče;
+            double RezultatVodka = BlagajnaVodka - KomoraVodka;
+            double RezultatBorovnicke = BlagajnaBorovnicke - KomoraBorovnicke;
+            double RezultatJagermeister = BlagajnaJagermaister - KomoraJagermaiset;
+            double RezultatJackDaniels = BlagajnaJackDaniels - KomoraJackDaniels;
+            double RezultatGin = BlagajnaGin - KomoraGin;
 
             //TODO ustvari tabelo 3 pa pripiši vrednosti also neke vrednosti bi se dale pomoje zračunat ne :)
+            DataTable DiffDT = new DataTable();
+            DiffDT.Columns.Add("Pijaca");
+            DiffDT.Columns.Add("Vrednost po enotah");
 
+            DiffDT.Rows.Add("Pepsi Cola (enote oziroma 1dcl)", RezultatCola);
+            DiffDT.Rows.Add("Schweps (enote oziroma 1dcl", RezultatSchweps);
+            DiffDT.Rows.Add("Ora (enote oziroma 1dcl)", RezultatOra);
+            DiffDT.Rows.Add("Ledeni Caj (enote oziroma 1dcl)", RezultatLedeniCaj);
+            DiffDT.Rows.Add("Voda z okusom (enote oziroma 1dcl)", RezultatVodaOkus);
+            DiffDT.Rows.Add("Voda brez okusa (enote oziroma 1dcl)", RezultatVodaBrez);
+            DiffDT.Rows.Add("Juice (enote oziroma 1dcl)", RezultatJuice);
+            DiffDT.Rows.Add("Radenska (enote oziroma 1dcl)", RezultatRadenska);
+            DiffDT.Rows.Add("Energijski (enote oziroma 2.5dcl)", RezultatEnergijski);
+            DiffDT.Rows.Add("Pivo Lasko (enote oziroma 1 Pivo)", RezultatLasko);
+            DiffDT.Rows.Add("Pivo Union (enote oziroma 1 Pivo)", RezultatUnion);
+            DiffDT.Rows.Add("Pivo Brez Alkh. (enote oziroma 1 Pivo)", RezultatUnibrez);
+            DiffDT.Rows.Add("Belo vino (enote oziroma 1dcl)", RezultatVinoBelo);
+            DiffDT.Rows.Add("Rdeče vino (enote oziroma 1dcl)", RezultatVinoRdece);
+            DiffDT.Rows.Add("Vodka (enote oziroma 1l)", RezultatVodka/33);
+            DiffDT.Rows.Add("Borovnicke (enote oziroma 1l)", RezultatBorovnicke/33);
+            DiffDT.Rows.Add("Jagermeister (enote oziroma 1l)", RezultatJagermeister / 33);
+            DiffDT.Rows.Add("Jack Daniels (enote oziroma 1l)", RezultatJackDaniels / 33);
+            DiffDT.Rows.Add("Gin (enote oziroma 1l)", RezultatGin / 33);
+
+            dataTable3Blagajna.ItemsSource = DiffDT.DefaultView;
+            dataTable3Blagajna.IsReadOnly = true;
+
+            MessageBox.Show("POMOČ: \n Če je končno število pri 3 tabeli negativno, to pomeni, da se je iz komore odneslo več ven kot pa se je prodalo! \n " +
+                "Če je končno število pri 3 tabeli pozitivno, to pomeni, da se je prodalo več artiklov, kot jih je bilo nesenih iz komore! \n " +
+                "Če je število 0 pomeni, da se je enako število artiklov odneslo iz komore in prodalo.");
         }
+
 
         private void PorociloButton_Click(object sender, RoutedEventArgs e)
         {
             //Porocilo
         }
-
         private void ShraniPodatke_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                DataTable KomoraSum = ((DataView)dataTable1Blagajna.ItemsSource).Table;
+                DataTable BlagajnaVred = ((DataView)dataTable2Blagajna.ItemsSource).Table;
+                DataTable RazlikaBlagKom = ((DataView)dataTable3Blagajna.ItemsSource).Table;
+
+                // Create an instance of ShraniObjektSank
+                ShraniObjektSank sos = new ShraniObjektSank
+                {
+                    // Assign properties of sos
+                    imePrireditve = MainWindowKopija.prireditev.ime_prireditve,
+                    letoPrireditve = MainWindowKopija.prireditev.leto_prireditve,
+                    sank = MainWindowKopija.prireditev.sanki[this.Index].ime,
+                    kelnarji = MainWindowKopija.prireditev.sanki[this.Index].natakarji,
+                    nosac = MainWindowKopija.prireditev.sanki[this.Index].nosac,
+                    Komora = komoraKopija,
+                    NosacDataTable = NosacKopija,
+                    Rezultat = RazlikaKopija,
+                    KomoraSumirane = KomoraSum,
+                    Blagajna = BlagajnaVred,
+                    RazlikaBlagajnaKomora = RazlikaBlagKom,
+                };
+
+                // Serialize sos object to JSON string
+                string json = JsonConvert.SerializeObject(sos);
+
+                // Display SaveFileDialog to choose the file location
+                Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog();
+                saveFileDialog.Filter = "Fest Files|*.fest|All Files|*.*";
+                saveFileDialog.Title = "Save Fest Data";
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    // Write the JSON string to the selected file
+                    File.WriteAllText(saveFileDialog.FileName, json);
+
+                    // Show success message if the data is saved successfully
+                    MessageBox.Show("The data has been saved successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    // Show message if the user cancels the save operation
+                    MessageBox.Show("Save operation canceled by the user.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Display error message if any exception occurs during the process
+                MessageBox.Show($"An error occurred while saving the data: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
             MessageBox.Show("Shrani");
         }
-
-
         private DataTable UstvariKomoraSumiranaDataTable(DataTable komora)
         {
 
@@ -250,7 +337,6 @@ namespace ProjektFest
             newDataTable.Columns[0].ReadOnly = true;
             return newDataTable;
         }
-
 
     }
 }
