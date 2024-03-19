@@ -20,9 +20,14 @@ namespace ProjektFest
     /// </summary>
     public partial class NaloziStaroPage : Page
     {
-        public NaloziStaroPage(ShraniObjektSank sos)
+        ShraniObjektSank sosKopija {  get; set; }
+        MainWindow mainWindow1 {  get; set; }
+
+        public NaloziStaroPage(ShraniObjektSank sos, MainWindow mainWindow)
         {
             InitializeComponent();
+            this.sosKopija = sos;
+            this.mainWindow1 = mainWindow;
 
             ImeSankaStaro.Content = sos.sank;
             KelnarjiListViewStaro.ItemsSource = sos.kelnarji;
@@ -46,6 +51,23 @@ namespace ProjektFest
         private void ShraniPodatkeStaro_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Shrani podatke");
+        }
+
+        private void BlagajnaButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (sosKopija != null)
+                {
+                    NaloziStaroBlagajnaPrimerjava nsp = new NaloziStaroBlagajnaPrimerjava(this.sosKopija,mainWindow1);
+                    mainWindow1.Main.Content = nsp;
+                }
+            }
+            catch (Exception ew)
+            {
+
+                throw new Exception("Neki steka" + ew);
+            }
         }
     }
 }

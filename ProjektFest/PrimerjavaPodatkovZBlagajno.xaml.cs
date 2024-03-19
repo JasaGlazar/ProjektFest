@@ -216,8 +216,6 @@ namespace ProjektFest
                 "Če je končno število pri 3 tabeli pozitivno, to pomeni, da se je prodalo več artiklov, kot jih je bilo nesenih iz komore! \n " +
                 "Če je število 0 pomeni, da se je enako število artiklov odneslo iz komore in prodalo.");
         }
-
-
         private void PorociloButton_Click(object sender, RoutedEventArgs e)
         {
             //Porocilo

@@ -52,7 +52,7 @@ namespace ProjektFest
 
                     if (sos != null)
                     {
-                        NaloziStaroPage nsp = new NaloziStaroPage(sos);
+                        NaloziStaroPage nsp = new NaloziStaroPage(sos, mainwindow);
                         mainwindow.Main.Content = nsp;
                     }
                     else

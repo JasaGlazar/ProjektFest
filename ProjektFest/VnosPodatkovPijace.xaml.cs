@@ -59,11 +59,6 @@ namespace ProjektFest
             NosacText.Text = $"{this.mainwindow.prireditev.sanki.ElementAt(index).nosac.ime} {this.mainwindow.prireditev.sanki.ElementAt(index).nosac.priimek}";
 
             DataTable komora = ustvariPraznoTabelo();
-            //Odstrani zadnji column v komora tabeli ker nerabimo koncnega stanja
-            /* Bom pusto isto pa se naj vse preverja, naj pač prepišejo vrednosti se zadaj pri komori
-            if (komora.Columns.Count > 0)
-                komora.Columns.RemoveAt(komora.Columns.Count - 1);
-            */
             DataTable nosac = ustvariPraznoTabelo();
 
             //Prikazi tabli
@@ -78,7 +73,6 @@ namespace ProjektFest
             MessageBox.Show("Generiraj porocilo");
             UstvariPDF();
         }
-
         private void Primerjaj_ButtonClick(object sender, RoutedEventArgs e)
         {
             try
@@ -201,7 +195,6 @@ namespace ProjektFest
                 MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
         private void UstvariPDF()
         {
             try
@@ -299,7 +292,6 @@ namespace ProjektFest
                 MessageBox.Show("Error generating PDF: " + ex.Message);
             }
         }
-
         private void IncludeDataTableInPdf(Document document, string tableName, DataTable dataTable)
         {
             iText.Layout.Element.Paragraph tableTitle = new iText.Layout.Element.Paragraph(tableName)
@@ -331,7 +323,6 @@ namespace ProjektFest
             // Add space between tables
             document.Add(new AreaBreak());
         }
-
         private DataTable ustvariPraznoTabelo()
         {
             // Create DataTable with 5 columns
@@ -360,7 +351,6 @@ namespace ProjektFest
             }
             return datatable;
         }
-
         private void ShraniPodatke_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -413,7 +403,6 @@ namespace ProjektFest
             }
 
         }
-
         private void Blagajna_Click(object sender, RoutedEventArgs e)
         {
             DataTable Komora = ((DataView)dataTable1.ItemsSource).Table;
