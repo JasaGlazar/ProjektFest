@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace ProjektFest
 {
@@ -90,6 +92,52 @@ namespace ProjektFest
 
             return prireditevFolderPot;
 
+        }
+
+        public static bool ValidateDataTable(DataTable dataTable)
+        {
+            foreach (DataRow row in dataTable.Rows)
+            {
+                for (int i = 2; i < 5; i++) // Columns 3, 4, and 5
+                {
+                    if (!IsPositiveNumberWithCommaOrPeriod(row[i].ToString().Trim()))
+                    {
+                        MessageBox.Show($"Napaka! Napaka pri vrstici {dataTable.Rows.IndexOf(row) + 1}, stolpcu {i + 1}");
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        public static bool ValidateDataTableBlagajna(DataTable dataTable)
+        {
+            foreach (DataRow row in dataTable.Rows)
+            {
+                // Check only the second column (index 1)
+                if (!IsPositiveNumberWithCommaOrPeriod(row[1].ToString().Trim()))
+                {
+                    MessageBox.Show($"Napaka! Napaka v vrstici {dataTable.Rows.IndexOf(row) + 1}, stolpec 2");
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        static bool IsPositiveNumberWithCommaOrPeriod(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return true; // Allow empty values
+
+            // Splitting by both comma and period, and checking each part
+            string[] parts = input.Split(new char[] { ',', '.' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (string part in parts)
+            {
+                double number;
+                if (!double.TryParse(part, out number) || number < 0)
+                    return false;
+            }
+            return true;
         }
     }
 }
