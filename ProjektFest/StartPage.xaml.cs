@@ -37,58 +37,9 @@ namespace ProjektFest
 
         private void NalziStaroBtn_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                // Display OpenFileDialog to choose the file location
-                Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
-                openFileDialog.Filter = "Fest Files|*.fest|All Files|*.*";
-                openFileDialog.Title = "Open Fest Data";
-
-                if (openFileDialog.ShowDialog() == true)
-                {
-                    // Deserialize the data from the selected file
-                    string filePath = openFileDialog.FileName;
-                    ShraniObjektSank sos = DeserializeShraniObjektSank(filePath);
-
-                    if (sos != null)
-                    {
-                        NaloziStaroPage nsp = new NaloziStaroPage(sos, mainwindow);
-                        mainwindow.Main.Content = nsp;
-                    }
-                    else
-                    {
-                        // Show message if deserialization failed
-                        MessageBox.Show("Failed to deserialize the data.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                // Handle any other errors that occur during the process
-                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            PregledFolderaPreteklePrireditve nsp = new PregledFolderaPreteklePrireditve(mainwindow);
+            mainwindow.Main.Content = nsp;
         }
-
-        private ShraniObjektSank DeserializeShraniObjektSank(string filePath)
-        {
-            try
-            {
-                // Read the JSON data from the file
-                string jsonData = File.ReadAllText(filePath);
-
-                // Deserialize the JSON data into a ShraniObjektSank object
-                ShraniObjektSank sos = JsonConvert.DeserializeObject<ShraniObjektSank>(jsonData);
-
-                return sos;
-            }
-            catch (Exception ex)
-            {
-                // Handle any errors that occur during deserialization
-                MessageBox.Show($"An error occurred while deserializing the data: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return null;
-            }
-        }
-
 
         private void UstvariNovoBtn_Click(object sender, RoutedEventArgs e)
         {
