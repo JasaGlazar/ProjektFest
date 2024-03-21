@@ -56,10 +56,13 @@ namespace ProjektFest
             //pridobi imena kelnarjev
             KelnarjiListView.ItemsSource = this.mainwindow.prireditev.sanki.ElementAt(index).natakarji;
             //pridobi ime nosacev
+            //TODO ERROR CE UPORABNIK DEJANSKO NE DODA NIKOGA!!
             NosacText.Text = $"{this.mainwindow.prireditev.sanki.ElementAt(index).nosac.ime} {this.mainwindow.prireditev.sanki.ElementAt(index).nosac.priimek}";
 
-            DataTable komora = ustvariPraznoTabelo();
-            DataTable nosac = ustvariPraznoTabelo();
+            List<Pijaca> SeznamPijaceZaSeznam = Pijaca.DataTablePijaca();
+
+            DataTable komora = Utilities.ustvariPraznoTabelo(SeznamPijaceZaSeznam);
+            DataTable nosac = Utilities.ustvariPraznoTabelo(SeznamPijaceZaSeznam);
 
             //Prikazi tabli
             dataTable1.ItemsSource = komora.DefaultView;
@@ -67,12 +70,15 @@ namespace ProjektFest
 
         }
 
-
+        //tega gumba vec ni, se bo prestavil v blagajna page
         private void GenerirajPorocilo_ButtonClick(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Generiraj porocilo");
             UstvariPDF();
         }
+
+
+        //Ta dva buttna sta se active
         private void Primerjaj_ButtonClick(object sender, RoutedEventArgs e)
         {
             try
@@ -205,6 +211,17 @@ namespace ProjektFest
                 MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        private void Blagajna_Click(object sender, RoutedEventArgs e)
+        {
+            DataTable Komora = ((DataView)dataTable1.ItemsSource).Table;
+            DataTable Nosac = ((DataView)dataTable2.ItemsSource).Table;
+            DataTable Razlika = ((DataView)dataTable3.ItemsSource).Table;
+
+            mainwindow.Main.Content = new PrimerjavaPodatkovZBlagajno(Komora, Nosac, Razlika, this.mainwindow, this.index);
+        }
+
+
+        //podporne metode
         private void UstvariPDF()
         {
             try
@@ -333,93 +350,7 @@ namespace ProjektFest
             // Add space between tables
             document.Add(new AreaBreak());
         }
-        private DataTable ustvariPraznoTabelo()
-        {
-            // Create DataTable with 5 columns
-            DataTable datatable = new DataTable();
-            for (int i = 1; i <= 5; i++)
-            {
-                datatable.Columns.Add($"Column{i}", typeof(string));
-            }
-            datatable.Columns[0].ColumnName = "Pijaca";
-            datatable.Columns[1].ColumnName = "Kolicina";
-            datatable.Columns[2].ColumnName = "Zacetno";
-            datatable.Columns[3].ColumnName = "Vmesno";
-            datatable.Columns[4].ColumnName = "Koncno";
-
-            // Set the first and second columns as read-only
-            datatable.Columns[0].ReadOnly = true;
-            datatable.Columns[1].ReadOnly = true;
-
-            for (int i = 0; i < pijacaDataTable.Count; i++)
-            {
-                DataRow row = datatable.NewRow();
-                row[0] = pijacaDataTable[i].ime;
-                row[1] = "Kol.";
-
-                datatable.Rows.Add(row);
-            }
-            return datatable;
-        }
-        private void ShraniPodatke_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                // Get DataTable instances from data sources
-                DataTable Komora = ((DataView)dataTable1.ItemsSource).Table;
-                DataTable Nosac = ((DataView)dataTable2.ItemsSource).Table;
-                DataTable Rezultat = ((DataView)dataTable3.ItemsSource).Table;
-
-                // Create an instance of ShraniObjektSank
-                ShraniObjektSank sos = new ShraniObjektSank
-                {
-                    // Assign properties of sos
-                    imePrireditve = mainwindow.prireditev.ime_prireditve,
-                    letoPrireditve = mainwindow.prireditev.leto_prireditve,
-                    sank = mainwindow.prireditev.sanki[this.index].ime,
-                    kelnarji = mainwindow.prireditev.sanki[this.index].natakarji,
-                    nosac = mainwindow.prireditev.sanki[this.index].nosac,
-                    Komora = Komora,
-                    NosacDataTable = Nosac,
-                    Rezultat = Rezultat,
-                };
-
-                // Serialize sos object to JSON string
-                string json = JsonConvert.SerializeObject(sos);
-
-                // Display SaveFileDialog to choose the file location
-                Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog();
-                saveFileDialog.Filter = "Fest Files|*.fest|All Files|*.*";
-                saveFileDialog.Title = "Save Fest Data";
-
-                if (saveFileDialog.ShowDialog() == true)
-                {
-                    // Write the JSON string to the selected file
-                    File.WriteAllText(saveFileDialog.FileName, json);
-
-                    // Show success message if the data is saved successfully
-                    MessageBox.Show("The data has been saved successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                else
-                {
-                    // Show message if the user cancels the save operation
-                    MessageBox.Show("Save operation canceled by the user.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-            }
-            catch (Exception ex)
-            {
-                // Display error message if any exception occurs during the process
-                MessageBox.Show($"An error occurred while saving the data: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-
-        }
-        private void Blagajna_Click(object sender, RoutedEventArgs e)
-        {
-            DataTable Komora = ((DataView)dataTable1.ItemsSource).Table;
-            DataTable Nosac = ((DataView)dataTable2.ItemsSource).Table;
-            DataTable Razlika = ((DataView)dataTable3.ItemsSource).Table;
-
-            mainwindow.Main.Content = new PrimerjavaPodatkovZBlagajno(Komora, Nosac, Razlika, this.mainwindow, this.index);
-        }
+        
+        
     }
 }

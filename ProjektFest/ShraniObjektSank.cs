@@ -16,10 +16,12 @@ namespace ProjektFest
         public List<Oseba> kelnarji { get; set; }
         public Oseba nosac {  get; set; }
 
+        //2. zavihek
         public DataTable Komora { get; set; }
         public DataTable NosacDataTable { get; set; }
         public DataTable Rezultat {  get; set; }
         
+        //3. zavihek
         public DataTable KomoraSumirane {  get; set; }
         public DataTable Blagajna { get; set; }
         public DataTable RazlikaBlagajnaKomora {  get; set; }
