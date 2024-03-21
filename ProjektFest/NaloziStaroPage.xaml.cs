@@ -34,8 +34,17 @@ namespace ProjektFest
             ImeSankaStaro.Content = sos.sank;
             KelnarjiListViewStaro.ItemsSource = sos.kelnarji;
             NosacTextStaro.Text = $"{sos.nosac.ime} {sos.nosac.priimek}";
+
+            //komora
+            sos.Komora.Columns[0].ReadOnly = true;
+            sos.Komora.Columns[1].ReadOnly = true;
             dataTable1Staro.ItemsSource = sos.Komora.DefaultView;
+            //nosac
+            sos.NosacDataTable.Columns[0].ReadOnly = true;
+            sos.NosacDataTable.Columns[1].ReadOnly = true;
             dataTable2Staro.ItemsSource = sos.NosacDataTable.DefaultView;
+            //Razlika
+            dataTable3Staro.IsReadOnly = true;
             dataTable3Staro.ItemsSource = sos.Rezultat.DefaultView;
         }
 

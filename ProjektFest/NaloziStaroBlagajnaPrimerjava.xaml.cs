@@ -40,11 +40,12 @@ namespace ProjektFest
             this.mainWindowKopija = mainWindow;
 
             DataTable PrikaziTabelo = Utilities.UstvariKomoraSumiranaDataTable(Komora);
+            
             dataTable1BlagajnaStaro.ItemsSource = PrikaziTabelo.DefaultView;
             dataTable1BlagajnaStaro.IsReadOnly = true;
 
-            DataTable PrikaziBlagajno = Utilities.UstvariBlagajnoZaVstavljanje();
-            dataTable2BlagajnaStaro.ItemsSource = PrikaziBlagajno.DefaultView;
+            sos.Blagajna.Columns[0].ReadOnly = true;
+            dataTable2BlagajnaStaro.ItemsSource = sos.Blagajna.DefaultView;
 
         }
 

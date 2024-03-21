@@ -83,7 +83,6 @@ namespace ProjektFest
         {
             try
             {
-                PorociloButton.IsEnabled = true;
                 BlagajnaButton.IsEnabled = true;
                 //Ustvarjena tretja tabela ki bo prikazala rezultate glede na prvi dve
                 DataTable diffTable = new DataTable();
