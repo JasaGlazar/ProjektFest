@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,6 +27,7 @@ namespace ProjektFest
     {
         MainWindow mainwindow { get; set; }
         Dictionary<string, Pijaca> slovar_pijac = new Dictionary<string, Pijaca>();
+        string izbran_key;
         //naredo sem dictionary da mam key value paire da lahko na podlagi stringa iz listboxa brišem pijace znotraj seznama_pijac iz mainwindowa
         public NovaPrireditevPage(MainWindow mw)
         {
@@ -69,16 +71,6 @@ namespace ProjektFest
 
         }
 
-        private void IzbrisiIzbranoPijacoBtn_Click(object sender, RoutedEventArgs e)
-        {
-            if(SeznamPijacListBox.SelectedItem != null)
-            {
-                mainwindow.seznam_pijac.Remove(slovar_pijac[SeznamPijacListBox.SelectedItem.ToString()]);
-                slovar_pijac.Remove(SeznamPijacListBox.SelectedItem.ToString());
-                SeznamPijacListBox.Items.Remove(SeznamPijacListBox.SelectedItem);
-            }
-
-        }
 
         private void naslednjiKorakBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -99,6 +91,55 @@ namespace ProjektFest
             {
                 MessageBox.Show("Naprevilen vnos števila šankov");
             }
+        }
+
+        private void PotrdiSpremembeBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (izbran_key != null)
+            {
+                Pijaca pijaca_znotraj_seznama = mainwindow.seznam_pijac.FirstOrDefault(p => p.Equals(slovar_pijac[izbran_key]));
+                if (pijaca_znotraj_seznama != null)
+                {
+                    pijaca_znotraj_seznama.ime = ImePijaceInput.Text;
+                    try
+                    {
+                        string nova_cena = CenaPijaceINput.Text;
+                        if (CenaPijaceINput.Text.Contains(','))
+                        {
+                            nova_cena = CenaPijaceINput.Text.Replace(',','.');
+                        } 
+                        pijaca_znotraj_seznama.cena = Convert.ToDouble(nova_cena);
+                    }
+                    catch (FormatException)
+                    {
+                        MessageBox.Show("Napačni vnos cene!");
+                        return;
+                    }
+                    slovar_pijac.Clear();
+                    SeznamPijacListBox.Items.Clear();
+                    napolni_listbox();
+
+                    string json = JsonSerializer.Serialize(mainwindow.seznam_pijac);
+                    File.WriteAllText("seznam_pijac.json", json);
+                }
+                ImePijaceInput.Text = string.Empty;
+                CenaPijaceINput.Text = string.Empty;
+            }
+
+
+
+        }
+
+        private void SeznamPijacListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            izbran_key = SeznamPijacListBox.SelectedItem as string;         
+            if (izbran_key != null)
+            {
+                Pijaca izbrana_pijaca = slovar_pijac[izbran_key];
+                ImePijaceInput.Text = izbrana_pijaca.ime;
+                CenaPijaceINput.Text = izbrana_pijaca.cena.ToString();
+            }
+            
         }
     }
 }
