@@ -79,14 +79,26 @@ namespace ProjektFest
                 mainwindow.prireditev.ime_prireditve = ImePrireditveInput.Text;
                 mainwindow.prireditev.leto_prireditve = LetoPrireditveInput.Text;
 
-                Utilities.UstvariMapoZaPrireditev(mainwindow.prireditev.ime_prireditve, mainwindow.prireditev.leto_prireditve);
+                string imePrireditve = ImePrireditveInput.Text.Trim(); 
+                string letoPrireditve = LetoPrireditveInput.Text.Trim();
+                string steviloSankov = StSankovInput.Text.Trim();
 
-                foreach(Pijaca p in mainwindow.seznam_pijac)
+                if (!string.IsNullOrEmpty(imePrireditve) && !string.IsNullOrEmpty(letoPrireditve) && !string.IsNullOrEmpty(steviloSankov))
                 {
-                    mainwindow.prireditev.seznam_pijace.Add(p);
+
+                    foreach(Pijaca p in mainwindow.seznam_pijac)
+                    {
+                        mainwindow.prireditev.seznam_pijace.Add(p);
+                    }
+                    Utilities.UstvariMapoPrireditve(imePrireditve, letoPrireditve);
+
+                    mainwindow.Main.Content = new SankiPage(Convert.ToInt32(StSankovInput.Text), mainwindow);
+                }
+                else
+                {
+                    MessageBox.Show("Prosim vnesite ime in leto prireditve ter število šankov.");
                 }
 
-                mainwindow.Main.Content = new SankiPage(Convert.ToInt32(StSankovInput.Text), mainwindow);
             } catch(System.FormatException)
             {
                 MessageBox.Show("Naprevilen vnos števila šankov");

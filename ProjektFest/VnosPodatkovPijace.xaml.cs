@@ -71,12 +71,12 @@ namespace ProjektFest
         }
 
         //tega gumba vec ni, se bo prestavil v blagajna page
-        private void GenerirajPorocilo_ButtonClick(object sender, RoutedEventArgs e)
+       /* private void GenerirajPorocilo_ButtonClick(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Generiraj porocilo");
             UstvariPDF();
         }
-
+       */
 
         //Ta dva buttna sta se active
         private void Primerjaj_ButtonClick(object sender, RoutedEventArgs e)
@@ -221,7 +221,7 @@ namespace ProjektFest
 
 
         //podporne metode
-        private void UstvariPDF()
+        /*private void UstvariPDF()
         {
             try
             {
@@ -349,7 +349,7 @@ namespace ProjektFest
             // Add space between tables
             document.Add(new AreaBreak());
         }
-        
+        */
         
     }
 }

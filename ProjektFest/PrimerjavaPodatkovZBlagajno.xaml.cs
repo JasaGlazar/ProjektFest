@@ -61,6 +61,8 @@ namespace ProjektFest
                 MessageBox.Show("POMOČ: \n Če je končno število pri 3 tabeli negativno, to pomeni, da se je iz komore odneslo več ven kot pa se je prodalo! \n " +
                     "Če je končno število pri 3 tabeli pozitivno, to pomeni, da se je prodalo več artiklov, kot jih je bilo nesenih iz komore! \n " +
                     "Če je število 0 pomeni, da se je enako število artiklov odneslo iz komore in prodalo.");
+
+                PorociloButton.IsEnabled = true;
             }
             catch (Exception ex)
             {
@@ -73,6 +75,13 @@ namespace ProjektFest
         private void PorociloButton_Click(object sender, RoutedEventArgs e)
         {
             //Porocilo
+            DataTable blagajna = ((DataView)dataTable2Blagajna.ItemsSource).Table;
+            DataTable primerjavaKomoraBlagajna = ((DataView)dataTable3Blagajna.ItemsSource).Table;
+            string naziv = this.MainWindowKopija.prireditev.ime_prireditve + " " + this.MainWindowKopija.prireditev.leto_prireditve;
+            string nosacIme = $"{this.MainWindowKopija.prireditev.sanki.ElementAt(Index).nosac.ime} {this.MainWindowKopija.prireditev.sanki.ElementAt(Index).nosac.priimek}";
+            string sank = this.MainWindowKopija.prireditev.sanki.ElementAt(Index).ime;
+            List<Oseba> natakarji = this.MainWindowKopija.prireditev.sanki.ElementAt(Index).natakarji;
+            Utilities.UstvariPDF(komoraKopija, NosacKopija, RazlikaKopija, blagajna, primerjavaKomoraBlagajna, naziv, nosacIme, sank, natakarji);
         }
         private void ShraniPodatke_Click(object sender, RoutedEventArgs e)
         {
@@ -99,13 +108,20 @@ namespace ProjektFest
                     RazlikaBlagajnaKomora = RazlikaBlagKom,
                 };
 
+                string PotDoMapeTrenutnePrireditve = 
+                Utilities.PridobiMapoPrireditve(MainWindowKopija.prireditev.ime_prireditve, MainWindowKopija.prireditev.leto_prireditve);
+
+
+
                 // Serialize sos object to JSON string
                 string json = JsonConvert.SerializeObject(sos);
 
                 // Display SaveFileDialog to choose the file location
                 Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog();
+                saveFileDialog.InitialDirectory = PotDoMapeTrenutnePrireditve;
                 saveFileDialog.Filter = "Fest Files|*.fest|All Files|*.*";
                 saveFileDialog.Title = "Save Fest Data";
+                saveFileDialog.FileName = $"{sos.imePrireditve}{sos.letoPrireditve}{sos.sank}";
 
                 if (saveFileDialog.ShowDialog() == true)
                 {
