@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -32,6 +33,9 @@ namespace ProjektFest
             InitializeComponent();
             Main.Content = new StartPage(this);
             string json = File.ReadAllText("seznam_pijac.json");
+
+
+
             seznam_pijac = JsonSerializer.Deserialize<List<Pijaca>>(json);
         }
     }
