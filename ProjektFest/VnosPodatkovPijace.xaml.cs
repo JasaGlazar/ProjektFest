@@ -257,7 +257,7 @@ namespace ProjektFest
                         List<Oseba> seznamNatakarjev = (List<Oseba>)KelnarjiListView.ItemsSource;
                         DateTime datumNastanka = DateTime.Now;
 
-                        iText.Layout.Element.Paragraph header = new iText.Layout.Element.Paragraph("Poročilo o prodani pijači")
+                        iText.Layout.Element.Paragraph header = new iText.Layout.Element.Paragraph("Porocilo o prodani pijaci")
                             .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
                             .SetFontSize(20);
                         document.Add(header);
@@ -286,10 +286,10 @@ namespace ProjektFest
                         iText.Layout.Element.Paragraph imeSankaParagraph = new iText.Layout.Element.Paragraph("Ime šanka: " + imeSanka);
                         document.Add(imeSankaParagraph);
 
-                        iText.Layout.Element.Paragraph datumNastankaParagraph = new iText.Layout.Element.Paragraph("Datum nastanka poročila: " + datumNastanka.ToString());
+                        iText.Layout.Element.Paragraph datumNastankaParagraph = new iText.Layout.Element.Paragraph("Datum nastanka porocila: " + datumNastanka.ToString());
                         document.Add(datumNastankaParagraph);
 
-                        iText.Layout.Element.Paragraph imeNosacaParagraph = new iText.Layout.Element.Paragraph("Ime nosača: " + imeNosaca);
+                        iText.Layout.Element.Paragraph imeNosacaParagraph = new iText.Layout.Element.Paragraph("Ime nosasa: " + imeNosaca);
                         document.Add(imeNosacaParagraph);
 
                         iText.Layout.Element.Paragraph natakarjiParagraph = new iText.Layout.Element.Paragraph("Natakarji: ");
