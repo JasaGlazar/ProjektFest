@@ -51,7 +51,6 @@ namespace ProjektFest
                 }
                 else
                 {
-                    // Show message if deserialization failed
                     MessageBox.Show("Napaka pri deserializaciji podatkov. Morda je datoteka pokvarjena.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }

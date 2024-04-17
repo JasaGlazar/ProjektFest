@@ -22,6 +22,8 @@ namespace ProjektFest
     /// </summary>
     public partial class NaloziStaroPage : Page
     {
+
+        //TODO onemogoci dodajanje rows
         ShraniObjektSank sosKopija {  get; set; }
         MainWindow mainWindow1 {  get; set; }
 
