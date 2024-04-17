@@ -28,6 +28,7 @@ namespace ProjektFest
         DataTable NosacKopija { get; set; }
         DataTable RazlikaKopija { get; set; }
         MainWindow mainWindowKopija { get; set; }
+        int Index { get; set; }
 
 
         public NaloziStaroBlagajnaPrimerjava(ShraniObjektSank sos,DataTable Komora, DataTable Nosac, DataTable Razlika, MainWindow mainWindow)
@@ -57,12 +58,19 @@ namespace ProjektFest
 
             dataTable3BlagajnaStaro.ItemsSource = Rezultat.DefaultView;
             dataTable3BlagajnaStaro.IsReadOnly=true;
+            PorociloButton2.IsEnabled = true;
         }
 
         private void PorociloStaroButton_Click(object sender, RoutedEventArgs e)
         {
             //Jaša jaz sem razmišlo da bi vse metode dala v Utilities class, malo sem pozno vido da mamo toti razred, mam pa namen vse napisane metode tja dat, da bo bolj pregledno!
-            MessageBox.Show("Porocilo Staro");
+            DataTable blagajna = ((DataView)dataTable2BlagajnaStaro.ItemsSource).Table;
+            DataTable primerjavaKomoraBlagajna = ((DataView)dataTable3BlagajnaStaro.ItemsSource).Table;
+            string naziv = sosKopija.imePrireditve + " " + sosKopija.letoPrireditve;
+            string nosacIme = $"{sosKopija.nosac.ime} {sosKopija.nosac.priimek}";
+            string sank = sosKopija.sank;
+            List<Oseba> natakarji = sosKopija.kelnarji;
+            Utilities.UstvariPDF(KomoraKopija, NosacKopija, RazlikaKopija, blagajna, primerjavaKomoraBlagajna, naziv, nosacIme, sank, natakarji);
         }
 
         private void ShraniStaroPodatke_Click(object sender, RoutedEventArgs e)
