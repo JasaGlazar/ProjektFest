@@ -24,6 +24,12 @@ using iText.Kernel.Pdf.Canvas.Draw;
 using iText.Layout.Renderer;
 using iText.Kernel.Font;
 using iText.IO.Font;
+using iTextSharp.text.pdf;
+using Org.BouncyCastle.Ocsp;
+using System.Windows.Markup;
+using System.Xml.Serialization;
+using Newtonsoft.Json;
+using System.Globalization;
 
 namespace ProjektFest
 {
@@ -34,55 +40,50 @@ namespace ProjektFest
     {
         MainWindow mainwindow { get; set; }
         List<Pijaca> pijacas { get; set; }
+        List<Pijaca> pijacaDataTable { get; set; }
+        int index { get; set; }
 
         public VnosPodatkovPijace(List<Pijaca> pijacas, MainWindow mainWindow, int index)
         {
             InitializeComponent();
             this.pijacas = pijacas;
+            this.pijacaDataTable = Pijaca.DataTablePijaca();
             this.mainwindow = mainWindow;
-
-            //mogoce bi si mogo kot konstruktor vrzt iz prejsne strani index selectanega taba, pa mainwindow da bi dobo tote lastnosti
-
+            this.index = index;
 
             //Pridobi ime sanka iz tab-a
             ImeSanka.Content = this.mainwindow.prireditev.sanki.ElementAt(index).ime;
             //pridobi imena kelnarjev
             KelnarjiListView.ItemsSource = this.mainwindow.prireditev.sanki.ElementAt(index).natakarji;
             //pridobi ime nosacev
+            //TODO ERROR CE UPORABNIK DEJANSKO NE DODA NIKOGA!!
             NosacText.Text = $"{this.mainwindow.prireditev.sanki.ElementAt(index).nosac.ime} {this.mainwindow.prireditev.sanki.ElementAt(index).nosac.priimek}";
 
-           
-            DataTable komora = ustvariPraznoTabelo();
-            //Odstrani zadnji column v komora tabeli ker nerabimo koncnega stanja
-            if (komora.Columns.Count > 0)
-                komora.Columns.RemoveAt(komora.Columns.Count - 1);
-            DataTable nosac = ustvariPraznoTabelo();
+            List<Pijaca> SeznamPijaceZaSeznam = Pijaca.DataTablePijaca();
+
+            DataTable komora = Utilities.ustvariPraznoTabelo(SeznamPijaceZaSeznam);
+            DataTable nosac = Utilities.ustvariPraznoTabelo(SeznamPijaceZaSeznam);
+
             //Prikazi tabli
             dataTable1.ItemsSource = komora.DefaultView;
             dataTable2.ItemsSource = nosac.DefaultView;
 
         }
 
-        //To bas event za generiranje pdf-ja jaša, mormo pa se postudirat malo kak omejit tote gumbe ce ponesreci kdo kline, v smislu da morajo biti vsa polja
-        //Izpolnjena pa to...
-
-        /*
-            Note to self, zmenit se moramo kako prikazujemo podatke v tretji tabeli, torej kdaj bo + in kdaj - torej ce si komora ne zapise ali ce si nosac nezapise
-            prav tako se moramo dogovorit za stvari ki se vrnejo nazaj, če se te odštejejo od koncnega rezulata računanja stanja, ker kolko vem to piše samo nosač
-            komora pa ne
-         */
-
-        private void GenerirajPorocilo_ButtonClick(object sender, RoutedEventArgs e)
+        //tega gumba vec ni, se bo prestavil v blagajna page
+       /* private void GenerirajPorocilo_ButtonClick(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Generiraj porocilo");
             UstvariPDF();
         }
+       */
 
+        //Ta dva buttna sta se active
         private void Primerjaj_ButtonClick(object sender, RoutedEventArgs e)
         {
             try
             {
-                PorociloButton.IsEnabled = true;
+                BlagajnaButton.IsEnabled = true;
                 //Ustvarjena tretja tabela ki bo prikazala rezultate glede na prvi dve
                 DataTable diffTable = new DataTable();
 
@@ -90,90 +91,118 @@ namespace ProjektFest
                 DataTable Komora = ((DataView)dataTable1.ItemsSource).Table;
                 DataTable Nosac = ((DataView)dataTable2.ItemsSource).Table;
 
-                //Dodajanje vrstic diffTabeli
-                for (int i = 0; i < Nosac.Columns.Count; i++)
+                bool prviPogoj = Utilities.ValidateDataTable(Komora);
+                bool drugiPogoj = Utilities.ValidateDataTable(Nosac);
+
+                if (prviPogoj && drugiPogoj)
                 {
-                    diffTable.Columns.Add(Nosac.Columns[i].ColumnName, Nosac.Columns[i].DataType);
+                    //Dodajanje vrstic diffTabeli
+                    for (int i = 0; i < Nosac.Columns.Count; i++)
+                    {
+                        diffTable.Columns.Add(Nosac.Columns[i].ColumnName, Nosac.Columns[i].DataType);
+                    }
+
+                    //Dodaten column znesek za prikaz minus/plus v tretji tabeli
+                    diffTable.Columns.Add("Skupna razlika", typeof(decimal));
+
+                    //Grem skozi vse vrstice nosaca
+                    int rowCount = Math.Min(Komora.Rows.Count, Nosac.Rows.Count);
+                    for (int i = 0; i < rowCount; i++)
+                    {
+                        DataRow komoraRow = Komora.Rows[i];
+                        DataRow nosacRow = Nosac.Rows[i];
+
+                        //ustvarim novo vrstico za novo tabelo za vsako tabelo iz osnovnih
+                        DataRow diffRow = diffTable.NewRow();
+
+                        //prvi dve celici v vseh vrsticah sta enaki zato samo vrednost prepisemo
+                        diffRow[0] = komoraRow[0];
+                        diffRow[1] = komoraRow[1];
+
+                        // Pretvorba praznih vrednosti 0, da ne bo napak z null vrednostmi
+                        double komoraZac = komoraRow[2] == DBNull.Value || string.IsNullOrWhiteSpace(komoraRow[2].ToString()) ? 0 : Convert.ToDouble(komoraRow[2]);
+                        double nosacZac = nosacRow[2] == DBNull.Value || string.IsNullOrWhiteSpace(nosacRow[2].ToString()) ? 0 : Convert.ToDouble(nosacRow[2]);
+
+                        //Primerjava komora - nosac
+                        if (komoraZac != nosacZac)
+                        {
+                            diffRow[2] = komoraZac - nosacZac;
+                        }
+                        else
+                        {
+                            diffRow[2] = 0;
+                        }
+
+                        //Splitnem vrednosti da pridobim koncno vrednost
+                        string[] komoraValues = komoraRow[3].ToString().Split(',');
+                        string[] nosacValues = nosacRow[3].ToString().Split(',');
+
+                        double sumKomora = 0;
+                        double sumNosac = 0;
+
+                        foreach (string value in komoraValues)
+                        {
+                            if (!string.IsNullOrEmpty(value))
+                            {
+                                // Parse each value using TryParse to handle decimal numbers correctly
+                                if (double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out double parsedValue))
+                                    sumKomora += parsedValue;
+                            }
+                        }
+
+                        foreach (string value in nosacValues)
+                        {
+                            if (!string.IsNullOrEmpty(value))
+                            {
+                                // Parse each value using TryParse to handle decimal numbers correctly
+                                if (double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out double parsedValue))
+                                    sumNosac += parsedValue;
+                            }
+                        }
+
+                        //Primerjava suminarih vrednosti
+                        if (Math.Abs(sumKomora - sumNosac) > double.Epsilon) // using double.Epsilon to account for floating point errors
+                        {
+                            diffRow[3] = sumKomora - sumNosac;
+                        }
+                        else
+                        {
+                            diffRow[3] = 0;
+                        }
+
+                        double komoraKoncna = komoraRow[4] == DBNull.Value || string.IsNullOrWhiteSpace(komoraRow[4].ToString()) ? 0 : double.TryParse(komoraRow[4].ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out double result) ? result : 0;
+                        double NosacKoncna = nosacRow[4] == DBNull.Value || string.IsNullOrWhiteSpace(nosacRow[4].ToString()) ? 0 : double.TryParse(nosacRow[4].ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out double resultNosac) ? resultNosac : 0;
+                        //Primerjava suminarih vrednosti
+                        if (komoraKoncna != NosacKoncna)
+                        {
+                            diffRow[4] = komoraKoncna - NosacKoncna;
+                        }
+                        else
+                        {
+                            diffRow[4] = 0;
+                        }
+
+                        double vseSkupajKomora = komoraZac + sumKomora + komoraKoncna;
+                        double vseSkupajNosac = nosacZac + sumNosac + NosacKoncna;
+
+                        //Torej če je končna vrednost v celici "-", pomeni da je nosač ven odnesel več kot pa je komora zapisala, 
+                        //Če je pa število pozitivno, pomeni da je komora več zapisala kot pa je nosač nesel ven
+                        //Če je 0 pomeni da se vse sklada
+                        decimal SkupnaRazlika = Convert.ToDecimal(vseSkupajKomora - vseSkupajNosac);
+
+                        diffRow[5] = SkupnaRazlika;
+
+                        //Dodajanje izpolnjene vrstice v novo generirano tabelo
+                        diffTable.Rows.Add(diffRow);
+                    }
+                    // Set diffTable as the ItemsSource of dataTable3
+                    dataTable3.ItemsSource = diffTable.DefaultView;
+                    dataTable3.IsReadOnly = true;
                 }
-
-                //Dodaten column znesek za prikaz minus/plus v tretji tabeli
-                diffTable.Columns.Add("Znesek", typeof(int));
-
-                //Grem skozi vse vrstice nosaca
-                int rowCount = Math.Min(Komora.Rows.Count, Nosac.Rows.Count);
-                for (int i = 0; i < rowCount; i++)
+                else
                 {
-                    DataRow komoraRow = Komora.Rows[i];
-                    DataRow nosacRow = Nosac.Rows[i];
-
-                    //ustvarim novo vrstico za novo tabelo za vsako tabelo iz osnovnih
-                    DataRow diffRow = diffTable.NewRow();
-
-                    //prvi dve celici v vseh vrsticah sta enaki zato samo vrednost prepisemo
-                    diffRow[0] = komoraRow[0];
-                    diffRow[1] = komoraRow[1];
-
-                    //Pretvorba praznih vrednosti 0, da nebo napak z null vrednostmi
-                    int komoraZac = Convert.ToInt32(komoraRow[2] == DBNull.Value ? 0 : komoraRow[2]);
-                    int nosacZac = Convert.ToInt32(nosacRow[2] == DBNull.Value ? 0 : nosacRow[2]);
-                    //pridobim povratno pijaco ki se nese nazaj v komoro in se ni prodala, torej se mora dodati dodatnemu minusu ki je ze oziroma zmanjsa tisti plus
-                    int povratnaPijaca = Convert.ToInt32(nosacRow[4] == DBNull.Value ? 0 : nosacRow[4]);
-
-                    //Primerjava komora - nosac
-                    if (komoraZac != nosacZac)
-                    {
-                        diffRow[2] = komoraZac - nosacZac;
-                    }
-                    else
-                    {
-                        diffRow[2] = 0;
-                    }
-
-                    //Splitnem vrednosti da pridobim koncno vrednost
-                    string[] komoraValues = komoraRow[3].ToString().Split(',');
-                    string[] nosacValues = nosacRow[3].ToString().Split(',');
-
-                    int sumKomora = 0;
-                    int sumNosac = 0;
-
-                    foreach (string value in komoraValues)
-                    {
-                        if (!string.IsNullOrEmpty(value))
-                            sumKomora += int.Parse(value);
-                    }
-
-                    foreach (string value in nosacValues)
-                    {
-                        if (!string.IsNullOrEmpty(value))
-                            sumNosac += int.Parse(value);
-                    }
-
-                    //Primerjava suminarih vrednosti
-                    if (sumKomora != sumNosac)
-                    {
-                        diffRow[3] = sumKomora - sumNosac;
-                    }
-                    else
-                    {
-                        diffRow[3] = 0;
-                    }
-
-                    //value v 5tki
-                    double cenaPijace = pijacas[i].cena;
-                    int razlika = Convert.ToInt32(diffRow[3]) - povratnaPijaca;
-
-                    var KoncniZnesek = razlika * cenaPijace;
-
-                    diffRow[4] = razlika;
-                    diffRow[5] = KoncniZnesek;
-
-
-                    //Dodajanje izpolnjene vrstice v novo generirano tabelo
-                    diffTable.Rows.Add(diffRow);
+                    MessageBox.Show("Vrednost v celici ni število!");
                 }
-
-                // Set diffTable as the ItemsSource of dataTable3
-                dataTable3.ItemsSource = diffTable.DefaultView;
             }
             catch (Exception ex)
             {
@@ -181,8 +210,18 @@ namespace ProjektFest
                 MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        private void Blagajna_Click(object sender, RoutedEventArgs e)
+        {
+            DataTable Komora = ((DataView)dataTable1.ItemsSource).Table;
+            DataTable Nosac = ((DataView)dataTable2.ItemsSource).Table;
+            DataTable Razlika = ((DataView)dataTable3.ItemsSource).Table;
 
-        private void UstvariPDF()
+            mainwindow.Main.Content = new PrimerjavaPodatkovZBlagajno(Komora, Nosac, Razlika, this.mainwindow, this.index);
+        }
+
+
+        //podporne metode
+        /*private void UstvariPDF()
         {
             try
             {
@@ -201,8 +240,8 @@ namespace ProjektFest
                 {
                     using (FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.Create))
                     {
-                        var writer = new PdfWriter(fs);
-                        var pdf = new PdfDocument(writer);
+                        var writer = new iText.Kernel.Pdf.PdfWriter(fs);
+                        var pdf = new iText.Kernel.Pdf.PdfDocument(writer);
                         var document = new Document(pdf);
 
                        // string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
@@ -279,7 +318,6 @@ namespace ProjektFest
                 MessageBox.Show("Error generating PDF: " + ex.Message);
             }
         }
-
         private void IncludeDataTableInPdf(Document document, string tableName, DataTable dataTable)
         {
             iText.Layout.Element.Paragraph tableTitle = new iText.Layout.Element.Paragraph(tableName)
@@ -311,30 +349,7 @@ namespace ProjektFest
             // Add space between tables
             document.Add(new AreaBreak());
         }
-
-        private DataTable ustvariPraznoTabelo()
-        {
-            // Create DataTable with 5 columns
-            DataTable datatable = new DataTable();
-            for (int i = 1; i <= 5; i++)
-            {
-                datatable.Columns.Add($"Column{i}", typeof(string));
-            }
-            datatable.Columns[0].ColumnName = "Pijaca";
-            datatable.Columns[1].ColumnName = "Kolicina";
-            datatable.Columns[2].ColumnName = "Zacetno";
-            datatable.Columns[3].ColumnName = "Vmesno";
-            datatable.Columns[4].ColumnName = "Koncno";
-
-            for (int i = 0; i < pijacas.Count; i++)
-            {
-                DataRow row = datatable.NewRow();
-                row[0] = pijacas[i].ime;
-                row[1] = "Kol.";
-
-                datatable.Rows.Add(row);
-            }
-            return datatable;
-        }
+        */
+        
     }
 }

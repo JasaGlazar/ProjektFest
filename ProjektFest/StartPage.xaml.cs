@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Newtonsoft.Json;
 
 namespace ProjektFest
 {
@@ -35,7 +37,8 @@ namespace ProjektFest
 
         private void NalziStaroBtn_Click(object sender, RoutedEventArgs e)
         {
-            mainwindow.WindowState = WindowState.Maximized;
+            PregledFolderaPreteklePrireditve nsp = new PregledFolderaPreteklePrireditve(mainwindow);
+            mainwindow.Main.Content = nsp;
         }
 
         private void UstvariNovoBtn_Click(object sender, RoutedEventArgs e)

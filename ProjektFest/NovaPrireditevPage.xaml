@@ -33,11 +33,9 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="10*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <ListBox x:Name="SeznamPijacListBox" Grid.Column="1" Margin="10"></ListBox>
-            <Button x:Name="IzbrisiIzbranoPijacoBtn" Content="Izbriši izbrano" Grid.Column="1" Grid.Row="1" Margin="10,5" Background="White" Click="IzbrisiIzbranoPijacoBtn_Click"></Button>
+            <ListBox x:Name="SeznamPijacListBox" Grid.Column="1" Margin="10" SelectionChanged="SeznamPijacListBox_SelectionChanged"></ListBox>
 
             <StackPanel Grid.RowSpan="2">
                 <Label Content="Dodaj Pijačo" Foreground="Black" FontSize="20" Margin="10" Grid.Column="1"></Label>
@@ -48,7 +46,7 @@
                 <Label Content="Cena pijače" Foreground="Black"  Margin="10,15,0,0"></Label>
                 <TextBox x:Name="CenaPijaceINput" HorizontalAlignment="Stretch" Height="25"  Margin="15,0" FontSize="16"></TextBox>
 
-                <Button x:Name="DodajPijacoBtn" Content="Dodaj" Background="White" Margin="10,25,10,10" Click="DodajPijacoBtn_Click"></Button>
+                <Button x:Name="PotrdiSpremembeBtn" Content="Potrdi spremembe" Background="White" Margin="10,25,10,10" Click="PotrdiSpremembeBtn_Click"></Button>
             </StackPanel>
 
         </Grid>

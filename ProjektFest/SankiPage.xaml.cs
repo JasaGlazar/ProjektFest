@@ -46,7 +46,7 @@ namespace ProjektFest
         {
             try
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(Prireditev));
+               /* XmlSerializer serializer = new XmlSerializer(typeof(Prireditev));
 
                 string potDoMape = Utilities.PridobiMapoTrenutnePrireditve(mainwindow.prireditev.ime_prireditve, mainwindow.prireditev.leto_prireditve);
 
@@ -56,8 +56,26 @@ namespace ProjektFest
                 {
                     serializer.Serialize(fs, mainwindow.prireditev);
                 }
-
+               */
                 // Create the new page instance
+
+                TabItem selectedTabItem = sankiTabControl.SelectedItem as TabItem;
+
+                if(selectedTabItem != null)
+                {
+                    TabTemplate tabContent = selectedTabItem.Content as TabTemplate;
+
+                    if(tabContent != null)
+                    {
+                        if(tabContent.natakarji_listbox.Items.Count == 0 || tabContent.nosaci_listbox.Items.Count == 0)
+                        {
+                            MessageBox.Show("Prosim vnesite natakarje in nosače.");
+                            return; 
+
+                        }
+                    }
+                }
+                
                 VnosPodatkovPijace newPage = new VnosPodatkovPijace(mainwindow.prireditev.seznam_pijace, mainwindow, sankiTabControl.SelectedIndex);
 
                 mainwindow.Main.Content = newPage;
