@@ -25,9 +25,9 @@ namespace ProjektFest
         //Utilites class za podporne metode...
         private Utilities()
         {
+
         }
 
-        //Še treba dodat, niso še vse pijače not
         public static List<Pijaca> StalnaPijaca()
         {
             //39
@@ -94,7 +94,6 @@ namespace ProjektFest
                 Directory.CreateDirectory(prireditevFolderPot);
             }
         }
-
         public static string PridobiMapoTrenutnePrireditve(string ime, string leto)
         {
             string osnovnaPot = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
@@ -104,7 +103,6 @@ namespace ProjektFest
             return prireditevFolderPot;
 
         }
-
         public static bool ValidateDataTable(DataTable dataTable)
         {
             foreach (DataRow row in dataTable.Rows)
@@ -385,8 +383,6 @@ namespace ProjektFest
                 return null;
             }
         }
-
-
 
         /*
             Metode za VnosPodatkovPijace Page
