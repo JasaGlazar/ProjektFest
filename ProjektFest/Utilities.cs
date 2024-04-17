@@ -13,6 +13,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using iText.Layout;
 using Org.BouncyCastle.Tls;
+using iText.Kernel.Font;
+using iText.IO.Font;
+using System.Windows.Media;
+using iTextSharp.text.pdf;
 
 namespace ProjektFest
 {
@@ -444,17 +448,15 @@ namespace ProjektFest
                 {
                     using (FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.Create))
                     {
+                        
+                        string fontsrc = "Fonts/NunitoSans-Regular.ttf";
+
+                        iText.Kernel.Font.PdfFont font = PdfFontFactory.CreateFont(fontsrc, PdfFontFactory.EmbeddingStrategy.FORCE_EMBEDDED);
+
                         var writer = new iText.Kernel.Pdf.PdfWriter(fs);
                         var pdf = new iText.Kernel.Pdf.PdfDocument(writer);
                         var document = new Document(pdf);
-
-                        // string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-                        // string relativeFontPath = System.IO.Path.Combine("Resources", "Roboto-Medium.ttf");
-                        // string fullFontPath = System.IO.Path.Combine (baseDirectory, relativeFontPath);
-
-                        // PdfFont font = PdfFontFactory.CreateFont(fullFontPath, PdfEncodings.IDENTITY_H);
-
-                        // document.SetFont(font);
+                        document.SetFont(font);
 
                         //string imeSanka = (string)ImeSanka.Content;
                         //List<Oseba> seznamNatakarjev = (List<Oseba>)KelnarjiListView.ItemsSource;
