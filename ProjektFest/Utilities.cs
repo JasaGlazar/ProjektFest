@@ -1,4 +1,7 @@
 ﻿using iText.IO.Util;
+using iText.Kernel.Pdf.Canvas.Draw;
+using iText.Layout.Element;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -8,6 +11,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using iText.Layout;
+using Org.BouncyCastle.Tls;
 
 namespace ProjektFest
 {
@@ -409,7 +414,189 @@ namespace ProjektFest
         }
 
 
+        /*
+         Metode za generiranje PDF poročila 
+        */
+
+        public static void UstvariPDF(DataTable komora, DataTable nosac, DataTable rezultat, DataTable blagajna, DataTable primerjavaKomoraBlagajna,
+                                      string naziv, string nosacime, string sank, List<Oseba> natakarji)
+        {
+            try
+            {
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.Filter = "PDF document (*.pdf)|*.pdf";
+                saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+                DataTable Komora = komora;
+                DataTable Nosac = nosac;
+                DataTable Rezultat = rezultat;
+                DataTable Blagajna = blagajna;
+                DataTable KomoraBlagajnaPrimerjava = primerjavaKomoraBlagajna;
+
+                string nazivPrireditve = naziv;
 
 
-    }
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    using (FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.Create))
+                    {
+                        var writer = new iText.Kernel.Pdf.PdfWriter(fs);
+                        var pdf = new iText.Kernel.Pdf.PdfDocument(writer);
+                        var document = new Document(pdf);
+
+                        // string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                        // string relativeFontPath = System.IO.Path.Combine("Resources", "Roboto-Medium.ttf");
+                        // string fullFontPath = System.IO.Path.Combine (baseDirectory, relativeFontPath);
+
+                        // PdfFont font = PdfFontFactory.CreateFont(fullFontPath, PdfEncodings.IDENTITY_H);
+
+                        // document.SetFont(font);
+
+                        //string imeSanka = (string)ImeSanka.Content;
+                        //List<Oseba> seznamNatakarjev = (List<Oseba>)KelnarjiListView.ItemsSource;
+                        string imeNosaca = nosacime;
+                        string imeSanka = sank;
+                        List<Oseba> seznamNatakarjev = natakarji;
+                        DateTime datumNastanka = DateTime.Now;
+
+                        iText.Layout.Element.Paragraph header = new iText.Layout.Element.Paragraph("Poročilo o prodani pijači")
+                            .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
+                            .SetFontSize(20);
+                        document.Add(header);
+
+                        iText.Layout.Element.Paragraph header1 = new iText.Layout.Element.Paragraph("Fest.si")
+                            .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
+                            .SetFontSize(14);
+                        document.Add(header1);
+
+                        iText.Layout.Element.Paragraph naslov = new iText.Layout.Element.Paragraph("Rajšpova ulica 16")
+                            .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
+                            .SetFontSize(14);
+                        document.Add(naslov);
+
+                        iText.Layout.Element.Paragraph posta = new iText.Layout.Element.Paragraph("2250 Ptuj")
+                            .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
+                            .SetFontSize(14);
+                        document.Add(posta);
+
+                        LineSeparator lineSeparator = new LineSeparator(new SolidLine());
+                        document.Add(lineSeparator);
+
+                        iText.Layout.Element.Paragraph imePrireditveParagraph = new iText.Layout.Element.Paragraph("Ime prireditve: " + nazivPrireditve);
+                        document.Add(imePrireditveParagraph);
+
+                        iText.Layout.Element.Paragraph imeSankaParagraph = new iText.Layout.Element.Paragraph("Ime šanka: " + imeSanka);
+                        document.Add(imeSankaParagraph);
+
+                        iText.Layout.Element.Paragraph datumNastankaParagraph = new iText.Layout.Element.Paragraph("Datum nastanka poročila: " + datumNastanka.ToString());
+                        document.Add(datumNastankaParagraph);
+
+                        iText.Layout.Element.Paragraph imeNosacaParagraph = new iText.Layout.Element.Paragraph("Ime nosača: " + imeNosaca);
+                        document.Add(imeNosacaParagraph);
+
+                        iText.Layout.Element.Paragraph natakarjiParagraph = new iText.Layout.Element.Paragraph("Natakarji: ");
+                        document.Add(natakarjiParagraph);
+
+                        foreach (var item in seznamNatakarjev)
+                        {
+                            iText.Layout.Element.Paragraph imeNatakarjaParagraph = new iText.Layout.Element.Paragraph(item.ime + " " + item.priimek);
+                            document.Add(imeNatakarjaParagraph);
+
+                        }
+
+                        Utilities.IncludeDataTableInPdf(document, "Komora", Komora);
+                        Utilities.IncludeDataTableInPdf(document, "Nosac", Nosac);
+                        Utilities.IncludeDataTableInPdf(document, "Blagajna", blagajna);
+                        Utilities.IncludeDataTableInPdf(document, "Primerjava komore in blagajne", primerjavaKomoraBlagajna);
+
+
+                        document.Close();
+
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error generating PDF: " + ex.Message);
+            }
+        }
+        public static void IncludeDataTableInPdf(Document document, string tableName, DataTable dataTable)
+        {
+            iText.Layout.Element.Paragraph tableTitle = new iText.Layout.Element.Paragraph(tableName)
+                .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER)
+                .SetFontSize(16);
+            document.Add(tableTitle);
+
+            // Create a table
+            iText.Layout.Element.Table table = new iText.Layout.Element.Table(dataTable.Columns.Count);
+
+            // Add table headers
+            foreach (DataColumn column in dataTable.Columns)
+            {
+                table.AddCell(new Cell().Add(new iText.Layout.Element.Paragraph(column.ColumnName)));
+            }
+
+            // Add table rows
+            foreach (DataRow row in dataTable.Rows)
+            {
+                foreach (object item in row.ItemArray)
+                {
+                    table.AddCell(new Cell().Add(new iText.Layout.Element.Paragraph(item.ToString())));
+                }
+            }
+
+            // Add the table to the document
+            document.Add(table);
+
+            // Add space between tables
+            document.Add(new AreaBreak());
+        }
+
+        /*
+         * Metode za ustvarjanje map "FestPrireditve" in vse konkretne prireditve znotraj nje
+        */
+        public static void UstvariMapoPrireditve(string ImePrireditve, string LetoPrireditve)
+        {
+            try
+            {
+                string osnovnaPot = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
+                string GlavnaPrireditevFolderPot = Path.Combine(osnovnaPot, "FestPrireditve");
+
+                string KonkretnaPrireditevFolderPot = Path.Combine(GlavnaPrireditevFolderPot, ImePrireditve + LetoPrireditve);
+
+                if (!Directory.Exists(GlavnaPrireditevFolderPot))
+                {
+                    Directory.CreateDirectory(GlavnaPrireditevFolderPot);
+                    MessageBox.Show("Na namizju je bila ustvrajena mapa FestPrireditve");
+                }
+
+                if (!Directory.Exists(KonkretnaPrireditevFolderPot))
+                {
+                    Directory.CreateDirectory(KonkretnaPrireditevFolderPot);
+                    MessageBox.Show($"Mapa za prireditev {ImePrireditve} {LetoPrireditve} je bila ustvarjena.");
+                }
+                else
+                {
+                    MessageBox.Show($"Mapa za prireditev {ImePrireditve} {LetoPrireditve} že obstaja.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Napaka pri ustvarjanju mape: {ex.Message}");
+            }
+        }
+
+
+        public static string PridobiMapoPrireditve(string ImePrireditve, string LetoPrireditve)
+        {
+            string osnovnaPot = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+
+            string prireditevFolderPot = System.IO.Path.Combine(osnovnaPot, "FestPrireditve", ImePrireditve + LetoPrireditve);
+
+            return prireditevFolderPot;
+        }
+
+}
 }
