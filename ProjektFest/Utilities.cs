@@ -17,6 +17,7 @@ using iText.Kernel.Font;
 using iText.IO.Font;
 using System.Windows.Media;
 using iTextSharp.text.pdf;
+using System.Text.Json;
 
 namespace ProjektFest
 {
@@ -190,7 +191,16 @@ namespace ProjektFest
         public static DataTable UstvariBlagajnoZaVstavljanje()
         {
             DataTable newDataTable = new DataTable();
-            List<Pijaca> PijacaCenik = Utilities.StalnaPijaca();
+            List<Pijaca> PijacaCenik = new();
+            string json = "";
+
+            string filepath = AppDomain.CurrentDomain.BaseDirectory.ToString() + "seznam_pijac.json";
+            if (File.Exists(filepath))
+            {
+                //Datoteka že obstaja, samo preberemo jo
+                json = File.ReadAllText("seznam_pijac.json");
+                PijacaCenik = JsonSerializer.Deserialize<List<Pijaca>>(json);
+            }
 
             newDataTable.Columns.Add("Ime Pijace");
             newDataTable.Columns.Add("Kolicina");
@@ -442,10 +452,13 @@ namespace ProjektFest
 
                 if (saveFileDialog.ShowDialog() == true)
                 {
-                    using (FileStream fs = new FileStream(saveFileDialog.FileName, FileMode.Create))
+                    string filePath = saveFileDialog.FileName;
+                    using (FileStream fs = new FileStream(filePath, FileMode.Create))
                     {
+
+                        //string fontsrc = "Fonts/NunitoSans-Regular.ttf";
                         
-                        string fontsrc = "Fonts/NunitoSans-Regular.ttf";
+                        string fontsrc = AppDomain.CurrentDomain.BaseDirectory.ToString() + "NunitoSans-Regular.ttf";
 
                         iText.Kernel.Font.PdfFont font = PdfFontFactory.CreateFont(fontsrc, PdfFontFactory.EmbeddingStrategy.FORCE_EMBEDDED);
 
@@ -515,6 +528,7 @@ namespace ProjektFest
                         document.Close();
 
                     }
+
 
                 }
             }
@@ -600,5 +614,18 @@ namespace ProjektFest
             return prireditevFolderPot;
         }
 
-}
+        private static void OpenPdfFile(string filePath)
+        {
+            try
+            {
+                // Open the PDF file using the default application
+                System.Diagnostics.Process.Start(filePath);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error opening PDF file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+    }
 }

@@ -54,7 +54,7 @@ namespace ProjektFest
                 {
                     File.WriteAllText(filepath, json);
                     json = File.ReadAllText(filepath);
-                    seznam_pijace = JsonSerializer.Deserialize<List<Pijaca>>(json);
+                    seznam_pijac = JsonSerializer.Deserialize<List<Pijaca>>(json);
                 }
                 catch (Exception ex)
                 {
