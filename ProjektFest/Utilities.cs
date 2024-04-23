@@ -17,6 +17,8 @@ using iText.Kernel.Font;
 using iText.IO.Font;
 using System.Windows.Media;
 using iTextSharp.text.pdf;
+using System.Text.Json.Nodes;
+using System.Text.Json;
 
 namespace ProjektFest
 {
@@ -190,7 +192,8 @@ namespace ProjektFest
         public static DataTable UstvariBlagajnoZaVstavljanje()
         {
             DataTable newDataTable = new DataTable();
-            List<Pijaca> PijacaCenik = Utilities.StalnaPijaca();
+            string json = File.ReadAllText("seznam_pijac.json");
+            List<Pijaca> PijacaCenik = JsonSerializer.Deserialize<List<Pijaca>>(json);
 
             newDataTable.Columns.Add("Ime Pijace");
             newDataTable.Columns.Add("Kolicina");
