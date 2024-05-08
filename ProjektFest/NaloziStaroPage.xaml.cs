@@ -40,6 +40,7 @@ namespace ProjektFest
             //komora
             sos.Komora.Columns[0].ReadOnly = true;
             sos.Komora.Columns[1].ReadOnly = true;
+            
             dataTable1Staro.ItemsSource = sos.Komora.DefaultView;
             //nosac
             sos.NosacDataTable.Columns[0].ReadOnly = true;

@@ -64,11 +64,11 @@
 
         <!-- DataGrids -->
         <DataGrid x:Name="dataTable1Staro" Grid.Row="2" Grid.Column="0" 
-    AutoGenerateColumns="True" CanUserAddRows="True" />
+    AutoGenerateColumns="True" CanUserAddRows="False" />
         <DataGrid x:Name="dataTable2Staro" Grid.Row="2" Grid.Column="1" 
-    AutoGenerateColumns="True" CanUserAddRows="True" />
+    AutoGenerateColumns="True" CanUserAddRows="False" />
         <DataGrid x:Name="dataTable3Staro" Grid.Row="2" Grid.Column="2" 
-    AutoGenerateColumns="True" CanUserAddRows="True" />
+    AutoGenerateColumns="True" CanUserAddRows="False" />
 
 
         <!-- Buttons -->
