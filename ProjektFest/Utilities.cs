@@ -242,7 +242,7 @@ namespace ProjektFest
             double KomoraVodaBrez = (Convert.ToDouble(row7[1]) * 5);
             double KomoraJuice = (Convert.ToDouble(row8[1]) * 10);
             double KomoraRadenska = (Convert.ToDouble(row9[1]) * 5);
-            double KomoraEnergy = (Convert.ToDouble(row10[1]) * 2.5);
+            double KomoraEnergy = (Convert.ToDouble(row10[1]));
             double KomoraLasko = (Convert.ToDouble(row11[1]) * 1);
             double KomoraUnion = (Convert.ToDouble(row12[1]) * 1);
             double KomoraUniBrez = (Convert.ToDouble(row13[1]) * 1);
@@ -308,10 +308,10 @@ namespace ProjektFest
                 double BlagajnaBrezOkus = (Convert.ToDouble(Brow7[1]) * 5);
                 double BlagajnaJuice = (Convert.ToDouble(Brow4[1]) * 1) + (Convert.ToDouble(Brow28[1]) * 1) + (Convert.ToDouble(Brow35[1]) * 10);
                 double BlagajnaRadenska = (Convert.ToDouble(Brow8[1]) * 1) + (Convert.ToDouble(Brow9[1]) * 5) + (Convert.ToDouble(Brow18[1]) * 1);
-                double BlagajnaEnergijskaPijaca = (Convert.ToDouble(Brow10[1]) * 2.5) + (Convert.ToDouble(Brow32[1]) * 2.5) + (Convert.ToDouble(Brow33[1]) * 15);
+                //Energijski
+                double BlagajnaEnergijskaPijaca = (Convert.ToDouble(Brow10[1]) + (Convert.ToDouble(Brow32[1]) + (Convert.ToDouble(Brow33[1]) * 6)));
                 //Pitaj če je v blagajni posebaj lasko in union al je skupaj???
-                double BlagajnaLasko = (Convert.ToDouble(Brow12[1]) * 1);
-                double BlagajnaUnion = (Convert.ToDouble(Brow12[1]) * 1);
+                double BlagajnaPivo033 = (Convert.ToDouble(Brow12[1]) * 1);
                 double BlagajnaUniBrez = (Convert.ToDouble(Brow13[1]) * 1);
                 double BlagajnaVinoBelo = (Convert.ToDouble(Brow14[1]) * 1) + (Convert.ToDouble(Brow15[1]) * 10) + (Convert.ToDouble(Brow18[1]) * 1) + (Convert.ToDouble(Brow19[1]) * 1);
                 double BlagajnaVinoRdece = (Convert.ToDouble(Brow16[1]) * 1) + (Convert.ToDouble(Brow17[1]) * 10) + (Convert.ToDouble(Brow20[1]) * 1) + (Convert.ToDouble(Brow21[1]) * 1);
@@ -325,20 +325,20 @@ namespace ProjektFest
                 // + pomeni da se je izdalo več pijače kot se je prodalo ( neki ne stima )
                 // - pomeni da se je prodalo več pijače kot se je prineslo? ( neki ne stima )
                 // mislim da bi mogo lih kontra nardit, kao od blagajne odstet da bi vedle če je minus prave i think kao da se je vec prineslo kak prodalo
-                double RezultatCola = BlagajnaCola - KomoraCola;
+                double RezultatCola = (BlagajnaCola - KomoraCola) / 5;
                 double RezultatSchweps = BlagajnaSchweps - KomoraSchweps;
-                double RezultatOra = BlagajnaOra - KomoraOra;
-                double RezultatLedeniCaj = BlagajnaLedeniCaj - KomoraLedeniCaj;
-                double RezultatVodaOkus = BlagajnaVodaOkus - KomoraVodaOkus;
-                double RezultatVodaBrez = BlagajnaBrezOkus - KomoraVodaBrez;
+                double RezultatOra = (BlagajnaOra - KomoraOra) / 5;
+                double RezultatLedeniCaj = (BlagajnaLedeniCaj - KomoraLedeniCaj) / 5;
+                double RezultatVodaOkus = (BlagajnaVodaOkus - KomoraVodaOkus) / 5;
+                double RezultatVodaBrez = (BlagajnaBrezOkus - KomoraVodaBrez) / 5;
                 double RezultatJuice = BlagajnaJuice - KomoraJuice;
-                double RezultatRadenska = BlagajnaRadenska - KomoraRadenska;
+                double RezultatRadenska = (BlagajnaRadenska - KomoraRadenska) / 5;
                 double RezultatEnergijski = BlagajnaEnergijskaPijaca - KomoraEnergy;
-                double RezultatLasko = BlagajnaLasko - KomoraLasko;
-                double RezultatUnion = BlagajnaUnion - KomoraUnion;
+                //Pivo
+                double RezultatPivo033 = BlagajnaPivo033 - (KomoraLasko+KomoraUnion);
                 double RezultatUnibrez = BlagajnaUniBrez - KomoraUniBrez;
-                double RezultatVinoBelo = BlagajnaVinoBelo - KomoraVinoBelo;
-                double RezultatVinoRdece = BlagajnaVinoRdece - KomoraVinoRdeče;
+                double RezultatVinoBelo = (BlagajnaVinoBelo - KomoraVinoBelo) / 10;
+                double RezultatVinoRdece = (BlagajnaVinoRdece - KomoraVinoRdeče) / 10;
                 double RezultatVodka = BlagajnaVodka - KomoraVodka;
                 double RezultatBorovnicke = BlagajnaBorovnicke - KomoraBorovnicke;
                 double RezultatJagermeister = BlagajnaJagermaister - KomoraJagermaiset;
@@ -350,29 +350,24 @@ namespace ProjektFest
                 DiffDT.Columns.Add("Pijaca");
                 DiffDT.Columns.Add("Vrednost po enotah");
 
-                DiffDT.Rows.Add("Pepsi Cola (enote oziroma 1dcl)", RezultatCola);
-                DiffDT.Rows.Add("Schweps (enote oziroma 1dcl", RezultatSchweps);
-                DiffDT.Rows.Add("Ora (enote oziroma 1dcl)", RezultatOra);
-                DiffDT.Rows.Add("Ledeni Caj (enote oziroma 1dcl)", RezultatLedeniCaj);
-                DiffDT.Rows.Add("Voda z okusom (enote oziroma 1dcl)", RezultatVodaOkus);
-                DiffDT.Rows.Add("Voda brez okusa (enote oziroma 1dcl)", RezultatVodaBrez);
+                DiffDT.Rows.Add("Pepsi Cola (1 plastenka 0.5)", RezultatCola);
+                DiffDT.Rows.Add("Schweps (enote oziroma 1dcl)", RezultatSchweps);
+                DiffDT.Rows.Add("Ora (1 plastenka 0.5)", RezultatOra);
+                DiffDT.Rows.Add("Ledeni Caj (1 plastenka 0.5)", RezultatLedeniCaj);
+                DiffDT.Rows.Add("Voda z okusom (1 plastenka 0.5)", RezultatVodaOkus);
+                DiffDT.Rows.Add("Voda brez okusa (1 plastenka 0.5)", RezultatVodaBrez);
                 DiffDT.Rows.Add("Juice (enote oziroma 1dcl)", RezultatJuice);
-                DiffDT.Rows.Add("Radenska (enote oziroma 1dcl)", RezultatRadenska);
-                DiffDT.Rows.Add("Energijski (enote oziroma 2.5dcl)", RezultatEnergijski);
-                DiffDT.Rows.Add("Pivo Lasko (enote oziroma 1 Pivo)", RezultatLasko);
-                DiffDT.Rows.Add("Pivo Union (enote oziroma 1 Pivo)", RezultatUnion);
+                DiffDT.Rows.Add("Radenska (1 plastenka 0.5)", RezultatRadenska);
+                DiffDT.Rows.Add("Energijski (Ena pločevinka)", RezultatEnergijski);
+                DiffDT.Rows.Add("Pivo 0.33", RezultatPivo033);
                 DiffDT.Rows.Add("Pivo Brez Alkh. (enote oziroma 1 Pivo)", RezultatUnibrez);
-                DiffDT.Rows.Add("Belo vino (enote oziroma 1dcl)", RezultatVinoBelo);
-                DiffDT.Rows.Add("Rdeče vino (enote oziroma 1dcl)", RezultatVinoRdece);
+                DiffDT.Rows.Add("Belo vino (Liter Belega Vina)", RezultatVinoBelo);
+                DiffDT.Rows.Add("Rdeče vino (Liter Rdečega Vina)", RezultatVinoRdece);
                 DiffDT.Rows.Add("Vodka (enote oziroma 1l)", RezultatVodka / 33);
                 DiffDT.Rows.Add("Borovnicke (enote oziroma 1l)", RezultatBorovnicke / 33);
                 DiffDT.Rows.Add("Jagermeister (enote oziroma 1l)", RezultatJagermeister / 33);
                 DiffDT.Rows.Add("Jack Daniels (enote oziroma 1l)", RezultatJackDaniels / 33);
                 DiffDT.Rows.Add("Gin (enote oziroma 1l)", RezultatGin / 33);
-
-                MessageBox.Show("POMOČ: \n Če je končno število pri 3 tabeli negativno, to pomeni, da se je iz komore odneslo več ven kot pa se je prodalo! \n " +
-                    "Če je končno število pri 3 tabeli pozitivno, to pomeni, da se je prodalo več artiklov, kot jih je bilo nesenih iz komore! \n " +
-                    "Če je število 0 pomeni, da se je enako število artiklov odneslo iz komore in prodalo.");
 
                 return DiffDT;
 
